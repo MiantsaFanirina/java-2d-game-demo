@@ -1,6 +1,7 @@
 package Main;
 
 import Entity.Player;
+import Tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,16 +18,15 @@ public class GamePanel extends JPanel implements Runnable {
 
     final int MAX_FPS = 120 ;
 
-    KeyHandler keyHandler = new KeyHandler();
-    Thread gameThread;
+
+    // TILE MANAGER
+    TileManager tileManager = new TileManager(this);
 
     // PLAYER ENTITY
+    KeyHandler keyHandler = new KeyHandler();
+    Thread gameThread;
     Player player = new Player(this, keyHandler);
 
-
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
 
-        double drawInterval = 1000000000 / MAX_FPS;
+        double drawInterval = (double) 1000000000 / MAX_FPS;
         long lastTime = System.nanoTime();
         long currentTime;
 
@@ -77,6 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) g;
 
+        tileManager.draw(g2);
         player.draw(g2);
 
         g2.dispose();
