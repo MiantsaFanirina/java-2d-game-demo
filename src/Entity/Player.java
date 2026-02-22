@@ -14,6 +14,11 @@ public class Player extends Entity {
 
     KeyHandler KeyHandler;
 
+    private int targetX = -1;
+    private int targetY = -1;
+    private boolean hasTarget = false;
+    private String targetDirection = "down";
+
     public Player(GamePanel gamePanel, KeyHandler KeyHandler)
     {
         this.gamePanel = gamePanel;
@@ -49,11 +54,51 @@ public class Player extends Entity {
         }
     }
 
+    public void setTargetPosition(int targetX, int targetY) {
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.hasTarget = true;
+        
+        int dx = targetX - (int) x;
+        int dy = targetY - (int) y;
+        
+        if (Math.abs(dx) > Math.abs(dy)) {
+            targetDirection = dx > 0 ? "right" : "left";
+        } else if (Math.abs(dy) > Math.abs(dx)) {
+            targetDirection = dy > 0 ? "down" : "up";
+        } else if (dx != 0) {
+            targetDirection = dx > 0 ? "right" : "left";
+        }
+    }
+
     public void update()
     {
-        if(KeyHandler.upPressed || KeyHandler.downPressed || KeyHandler.leftPressed || KeyHandler.rightPressed)
-        {
+        boolean isMoving = false;
 
+        if (hasTarget) {
+            int dx = targetX - (int) x;
+            int dy = targetY - (int) y;
+            double distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > speed) {
+                double ratioX = (double) dx / distance;
+                double ratioY = (double) dy / distance;
+                
+                direction = targetDirection;
+                
+                x += ratioX * speed;
+                y += ratioY * speed;
+                isMoving = true;
+            } else {
+                x = targetX;
+                y = targetY;
+                hasTarget = false;
+                targetX = -1;
+                targetY = -1;
+            }
+        }
+        else if(KeyHandler.upPressed || KeyHandler.downPressed || KeyHandler.leftPressed || KeyHandler.rightPressed)
+        {
             if (KeyHandler.upPressed)
             {
                 direction = "up";
@@ -74,7 +119,10 @@ public class Player extends Entity {
                 direction = "right";
                 x = x + speed;
             }
+            isMoving = true;
+        }
 
+        if (isMoving) {
             spriteCounter = spriteCounter + 1;
             if (spriteCounter > 10)
             {
@@ -89,9 +137,6 @@ public class Player extends Entity {
                 spriteCounter = 0;
             }
         }
-
-
-
     }
 
     public void draw(Graphics2D g2)
@@ -145,7 +190,7 @@ public class Player extends Entity {
                 break;
         }
 
-        g2.drawImage(image, x, y, GamePanel.tileSize, GamePanel.tileSize, null);
+        g2.drawImage(image, (int) x, (int) y, GamePanel.tileSize, GamePanel.tileSize, null);
 
     }
 }

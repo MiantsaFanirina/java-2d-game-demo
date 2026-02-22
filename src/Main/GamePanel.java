@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GamePanel extends JPanel implements Runnable {
     // SCREEM SETTINGS
@@ -26,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // PLAYER ENTITY
     KeyHandler keyHandler = new KeyHandler();
+    MouseHandler mouseHandler = new MouseHandler();
     Thread gameThread;
     Player player = new Player(this, keyHandler);
 
@@ -37,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         // KEY LISTENER
         this.addKeyListener(keyHandler);
+        this.addMouseListener(mouseHandler);
         this.setFocusable(true);
 
         this.addComponentListener(new ComponentAdapter() {
@@ -100,5 +104,13 @@ public class GamePanel extends JPanel implements Runnable {
         g2.dispose();
     }
 
+    private class MouseHandler extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                player.setTargetPosition(e.getX() - tileSize / 2, e.getY() - tileSize / 2);
+            }
+        }
+    }
 
 }
