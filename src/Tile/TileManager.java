@@ -37,9 +37,13 @@ public class TileManager {
 
     public void draw(Graphics2D g2) {
 
-        g2.drawImage(tile[0].image, 0, 0, GamePanel.tileSize, GamePanel.tileSize,  null);
-        g2.drawImage(tile[1].image, 48, 0, GamePanel.tileSize, GamePanel.tileSize,  null);
-        g2.drawImage(tile[2].image, 96, 0, GamePanel.tileSize, GamePanel.tileSize,  null);
+        // DRAW GRASS BACKGROUND
+        for (int i = 0; i < GamePanel.maxScreenRow + 1; i++) {
+            for (int j = 0; j < GamePanel.maxScreenCol + 1; j++) {
+                int tileNum = 0;
+                g2.drawImage(tile[tileNum].image, j * GamePanel.tileSize, i * GamePanel.tileSize, GamePanel.tileSize, GamePanel.tileSize, null);
+            }
+        }
 
     }
 

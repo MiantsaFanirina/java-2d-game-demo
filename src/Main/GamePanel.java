@@ -5,16 +5,18 @@ import Tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class GamePanel extends JPanel implements Runnable {
     // SCREEM SETTINGS
     static final int originalTileSize = 16;
     static final int scale = 3;
     public static final int tileSize = originalTileSize * scale;
-    final int maxScreenCol = 22;
-    final int maxScreenRow = 16;
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow;
+    public static int maxScreenCol = 22;
+    public static int maxScreenRow = 16;
+    public static int screenWidth = tileSize * maxScreenCol;
+    public static int screenHeight = tileSize * maxScreenRow;
 
     final int MAX_FPS = 120 ;
 
@@ -36,6 +38,20 @@ public class GamePanel extends JPanel implements Runnable {
         // KEY LISTENER
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateScreenSize();
+            }
+        });
+    }
+
+    private void updateScreenSize() {
+        maxScreenCol = getWidth() / tileSize;
+        maxScreenRow = getHeight() / tileSize;
+        screenWidth = maxScreenCol * tileSize;
+        screenHeight = maxScreenRow * tileSize;
     }
 
     public void startGameThread() {
@@ -70,6 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
+
     }
 
     public void paintComponent(Graphics g) {
