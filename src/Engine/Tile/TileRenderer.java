@@ -64,6 +64,10 @@ public class TileRenderer {
             if (image != null) {
                 g2.drawImage(image, x, y, tileSize, tileSize, null);
                 return;
+            } else if (tile.getColor() != null) {
+                g2.setColor(tile.getColor());
+                g2.fillRect(x, y, tileSize, tileSize);
+                return;
             }
         }
 

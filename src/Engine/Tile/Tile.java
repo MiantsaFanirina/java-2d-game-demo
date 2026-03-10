@@ -11,12 +11,23 @@ public class Tile {
     private final String name;
     private final List<BufferedImage> images = new ArrayList<>();
     private final boolean collision;
+    private java.awt.Color color;
 
     public Tile(int id, String name, BufferedImage image, boolean collision) {
         this.id = id;
         this.name = name;
-        this.images.add(image);
+        if (image != null) {
+            this.images.add(image);
+        }
         this.collision = collision;
+    }
+
+    public void setColor(java.awt.Color color) {
+        this.color = color;
+    }
+
+    public java.awt.Color getColor() {
+        return color;
     }
 
     public void addImage(BufferedImage img) {

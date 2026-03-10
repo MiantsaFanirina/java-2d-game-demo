@@ -25,5 +25,11 @@ public class TileMap {
         }
         return -1;
     }
+
+    public void setTileAt(int row, int col, int tileId) {
+        if (row >= 0 && row < rows && col >= 0 && col < columns) {
+            tileNumbers[row][col] = tileId;
+        }
+    }
 }
 

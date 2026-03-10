@@ -2,6 +2,10 @@ package Core.Match;
 
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
+import Core.Moba.Units.Tour;
+import Core.Moba.Units.Ancient;
+import Core.Moba.World.Arena;
+import Core.Config;
 import java.util.*;
 
 public class PathFinder {
@@ -37,10 +41,15 @@ public class PathFinder {
     
     private final TileMap tileMap;
     private final CollisionTable collisionTable;
+    private Arena arena;
     
     public PathFinder(TileMap tileMap, CollisionTable collisionTable) {
         this.tileMap = tileMap;
         this.collisionTable = collisionTable;
+    }
+    
+    public void setArena(Arena arena) {
+        this.arena = arena;
     }
     
     public List<int[]> findPath(int startCol, int startRow, int targetCol, int targetRow) {
@@ -49,7 +58,7 @@ public class PathFinder {
         }
 
         // If target is blocked, find the nearest walkable tile
-        if (collisionTable.hasCollision(tileMap.getTileAt(targetRow, targetCol))) {
+        if (hasCollision(targetRow, targetCol)) {
             int[] nearest = findNearestWalkableTile(targetCol, targetRow);
             if (nearest != null) {
                 targetCol = nearest[0];
@@ -100,14 +109,14 @@ public class PathFinder {
                         continue;
                     }
                     
-                    if (collisionTable.hasCollision(tileMap.getTileAt(ny, nx))) {
+                    if (hasCollision(ny, nx)) {
                         continue;
                     }
                     
                     // Prevent cutting through corners
                     if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
-                        if (collisionTable.hasCollision(tileMap.getTileAt(ny, currentNode.x)) || 
-                            collisionTable.hasCollision(tileMap.getTileAt(currentNode.y, nx))) {
+                        if (hasCollision(ny, currentNode.x) || 
+                            hasCollision(currentNode.y, nx)) {
                             continue;
                         }
                     }
@@ -141,6 +150,50 @@ public class PathFinder {
         return null; // No path found
     }
     
+    private boolean hasCollision(int row, int col) {
+        if (collisionTable.hasCollision(tileMap.getTileAt(row, col))) {
+            return true;
+        }
+        
+        if (arena != null) {
+            return hasTowerCollision(row, col);
+        }
+        
+        return false;
+    }
+    
+    private boolean hasTowerCollision(int row, int col) {
+        int tileSize = Config.getTileSize();
+        double tileX = col * tileSize;
+        double tileY = row * tileSize;
+        
+        for (Tour tower : arena.tours()) {
+            double towerPixelX = tower.position().x() * tileSize;
+            double towerPixelY = tower.position().y() * tileSize;
+            double towerWidth = tower.width() * tileSize;
+            double towerHeight = tower.height() * tileSize;
+            
+            if (tileX < towerPixelX + towerWidth && tileX + tileSize > towerPixelX
+                    && tileY < towerPixelY + towerHeight && tileY + tileSize > towerPixelY) {
+                return true;
+            }
+        }
+        
+        for (Ancient ancient : arena.ancients()) {
+            double ancientPixelX = ancient.position().x() * tileSize;
+            double ancientPixelY = ancient.position().y() * tileSize;
+            double ancientWidth = ancient.width() * tileSize;
+            double ancientHeight = ancient.height() * tileSize;
+            
+            if (tileX < ancientPixelX + ancientWidth && tileX + tileSize > ancientPixelX
+                    && tileY < ancientPixelY + ancientHeight && tileY + tileSize > ancientPixelY) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     private int calculateHeuristic(int x1, int y1, int x2, int y2) {
         // Octile distance for 8-way movement
         int dx = Math.abs(x1 - x2);
@@ -163,7 +216,7 @@ public class PathFinder {
             int cy = current[1];
 
             // If this tile is walkable, return it
-            if (!collisionTable.hasCollision(tileMap.getTileAt(cy, cx))) {
+            if (!hasCollision(cy, cx)) {
                 return current;
             }
 

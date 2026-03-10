@@ -2,14 +2,14 @@ package Engine;
 
 import Core.Config;
 import Core.Entity.Player;
+import Core.Moba.Units.Tour;
+import Core.Moba.Units.Ancient;
+import Core.Moba.World.*;
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
 import Engine.Input.KeyHandler;
 import Engine.Input.MouseHandler;
-import Engine.Render.Camera;
-import Engine.Render.ClickEffect;
-import Engine.Render.PlayerRenderer;
-import Engine.Render.PlayerSprites;
+import Engine.Render.*;
 import Engine.Tile.MapParser;
 import Engine.Tile.Tile;
 import Engine.Tile.TileLoader;
@@ -31,8 +31,10 @@ public class GamePanel extends JPanel implements Runnable {
     private final Player player;
     private final TileRenderer tileRenderer;
     private final PlayerRenderer playerRenderer;
+    private final TowerRenderer towerRenderer;
     private final Camera camera;
     private final List<ClickEffect> clickEffects = new ArrayList<>();
+    private final Arena arena;
     private Thread gameThread;
     
     public GamePanel() {
@@ -55,8 +57,26 @@ public class GamePanel extends JPanel implements Runnable {
         CollisionTable collisionTable = new CollisionTable(tileLoader.buildCollisionTable(tiles));
 
         tileRenderer = new TileRenderer(tileMap, tiles);
-        player = new Player(keyHandler, mouseHandler, tileMap, collisionTable);
+        
+        // --- Initialize MOBA Elements ---
+        arena = new Arena();
+        
+        // Define Team 1 (Blue)
+        Base blueBase = new Base(5000);
+        Fontaine blueFontaine = new Fontaine(new Vec2(5, 95), 100, 50);
+        Equipe blueTeam = new Equipe("Radiant", TeamColor.BLUE, blueBase, blueFontaine);
+        
+        // Define Team 2 (Red)
+        Base redBase = new Base(5000);
+        Fontaine redFontaine = new Fontaine(new Vec2(95, 5), 100, 50);
+        Equipe redTeam = new Equipe("Dire", TeamColor.RED, redBase, redFontaine);
+        
+        arena.initializeFromMap(tileMap, blueTeam, redTeam);
+        
+        // Player must be created AFTER arena is initialized
+        player = new Player(keyHandler, mouseHandler, tileMap, collisionTable, arena);
         playerRenderer = new PlayerRenderer(new PlayerSprites());
+        towerRenderer = new TowerRenderer();
         
         addKeyListener(keyHandler);
         addMouseListener(mouseHandler);
@@ -135,15 +155,33 @@ public class GamePanel extends JPanel implements Runnable {
         g2.scale(camera.getZoom(), camera.getZoom());
         g2.translate(-camera.getX(), -camera.getY());
 
+        // Draw tiles
         tileRenderer.draw(g2, camera, getWidth(), getHeight());
-        playerRenderer.draw(g2, player);
 
+        // Draw towers
+        for (Tour tour : arena.tours()) {
+            towerRenderer.draw(g2, tour, camera);
+        }
+
+        // Draw ancients
+        for (Ancient ancient : arena.ancients()) {
+            towerRenderer.drawAncient(g2, ancient, camera);
+        }
+
+        // Draw click effects
         for (ClickEffect effect : clickEffects) {
             effect.draw(g2);
         }
 
+        // Draw player
+        playerRenderer.draw(g2, player);
+
         g2.setTransform(oldTransform);
         
+        // UI overlay (untransformed)
+        g2.setColor(Color.white);
+        g2.drawString("FPS: " + (int) (1_000_000_000.0 / Config.getNanosecondsPerFrame()), 10, 20);
+
         g2.dispose();
     }
 }

@@ -10,8 +10,8 @@ public class Config {
     private static final double NANOSECONDS_PER_FRAME = 1_000_000_000.0 / MAX_FPS;
     
     private static final int PLAYER_DEFAULT_SPEED = 4;
-    private static final int PLAYER_DEFAULT_X = 480;
-    private static final int PLAYER_DEFAULT_Y = 240;
+    private static final int PLAYER_DEFAULT_X = 5 * TILE_SIZE; // Blue Base
+    private static final int PLAYER_DEFAULT_Y = 95 * TILE_SIZE; // Blue Base
     
     private static final int SPRITE_ANIMATION_SPEED = 10;
     

@@ -4,6 +4,9 @@ import Core.Config;
 import Core.Input.MoveInput;
 import Core.Input.TargetInput;
 import Core.Match.PathFinder;
+import Core.Moba.Units.Tour;
+import Core.Moba.Units.Ancient;
+import Core.Moba.World.Arena;
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
 
@@ -16,6 +19,7 @@ public class Player extends Entity {
     private final TileMap tileMap;
     private final CollisionTable collisionTable;
     private final PathFinder pathFinder;
+    private final Arena arena;
     
     // Targets are stored as the desired TOP-LEFT pixel position of the player,
     // but are derived from mouse clicks on the desired CENTER position.
@@ -26,17 +30,22 @@ public class Player extends Entity {
 
     private List<int[]> currentPath = null;
     private int currentPathIndex = 0;
+    private double lastPathX = -1;
+    private double lastPathY = -1;
+    private int stuckCounter = 0;
 
     // Collision hitbox is slightly inset from the sprite bounds to feel better.
     // Coordinates are in pixels relative to the player's top-left position.
     private static final double HITBOX_INSET_PX = 6.0;
     
-    public Player(MoveInput moveInput, TargetInput targetInput, TileMap tileMap, CollisionTable collisionTable) {
+    public Player(MoveInput moveInput, TargetInput targetInput, TileMap tileMap, CollisionTable collisionTable, Arena arena) {
         this.moveInput = moveInput;
         this.targetInput = targetInput;
         this.tileMap = tileMap;
         this.collisionTable = collisionTable;
+        this.arena = arena;
         this.pathFinder = new PathFinder(tileMap, collisionTable);
+        this.pathFinder.setArena(arena);
         setDefaultValues();
     }
     
@@ -45,6 +54,8 @@ public class Player extends Entity {
         setY(Config.getPlayerDefaultY());
         setSpeed(Config.getPlayerDefaultSpeed());
         setDirection(Direction.DOWN);
+        lastPathX = getX();
+        lastPathY = getY();
     }
     
     public void update() {
@@ -82,6 +93,7 @@ public class Player extends Entity {
         
         if (hasTarget) {
             isMoving = moveToTarget();
+            checkStuckAndRecalculate();
         } else if (moveInput.isAnyKeyPressed()) {
             isMoving = handleKeyboardMovement();
             currentPath = null;
@@ -152,10 +164,60 @@ public class Player extends Entity {
         double right = topLeftX + tileSize - inset;
         double bottom = topLeftY + tileSize - inset;
 
-        return isWallAt(left, top)
-                || isWallAt(right, top)
-                || isWallAt(left, bottom)
-                || isWallAt(right, bottom);
+        // Check tile collision - use more thorough check for pathfinding
+        double centerX = (left + right) / 2;
+        double centerY = (top + bottom) / 2;
+        
+        if (isWallAt(left, top) || isWallAt(right, top)
+                || isWallAt(left, bottom) || isWallAt(right, bottom)
+                || isWallAt(centerX, centerY)) {
+            return true;
+        }
+        
+        // Check tower collision for pathfinding
+        if (arena != null) {
+            return collidesWithTowersCustom(topLeftX, topLeftY, inset);
+        }
+        
+        return false;
+    }
+    
+    private boolean collidesWithTowersCustom(double topLeftX, double topLeftY, double inset) {
+        int tileSize = Config.getTileSize();
+        double left = topLeftX + inset;
+        double top = topLeftY + inset;
+        double right = topLeftX + tileSize - inset;
+        double bottom = topLeftY + tileSize - inset;
+        
+        // Check tower collisions
+        for (Tour tower : arena.tours()) {
+            double towerPixelX = tower.position().x() * tileSize;
+            double towerPixelY = tower.position().y() * tileSize;
+            double towerWidth = tower.width() * tileSize;
+            double towerHeight = tower.height() * tileSize;
+            
+            // AABB collision detection
+            if (right > towerPixelX && left < towerPixelX + towerWidth
+                    && bottom > towerPixelY && top < towerPixelY + towerHeight) {
+                return true;
+            }
+        }
+        
+        // Check ancient (base) collisions
+        for (Ancient ancient : arena.ancients()) {
+            double ancientPixelX = ancient.position().x() * tileSize;
+            double ancientPixelY = ancient.position().y() * tileSize;
+            double ancientWidth = ancient.width() * tileSize;
+            double ancientHeight = ancient.height() * tileSize;
+            
+            // AABB collision detection
+            if (right > ancientPixelX && left < ancientPixelX + ancientWidth
+                    && bottom > ancientPixelY && top < ancientPixelY + ancientHeight) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     private boolean moveToTarget() {
@@ -173,17 +235,56 @@ public class Player extends Entity {
             double newX = getX() + ratioX * getSpeed();
             double newY = getY() + ratioY * getSpeed();
             
+            boolean isFollowingPath = currentPath != null && currentPathIndex < currentPath.size();
+            
             if (!collidesAt(newX, newY)) {
                 setX(newX);
                 setY(newY);
                 return true;
+            } else if (isFollowingPath) {
+                double currentX = getX();
+                double currentY = getY();
+                
+                if (!collidesAt(newX, currentY)) {
+                    setX(newX);
+                    return true;
+                }
+                if (!collidesAt(currentX, newY)) {
+                    setY(newY);
+                    return true;
+                }
+                
+                if (!collidesAt(newX - getSpeed(), newY)) {
+                    setX(newX - getSpeed());
+                    return true;
+                }
+                if (!collidesAt(newX + getSpeed(), newY)) {
+                    setX(newX + getSpeed());
+                    return true;
+                }
+                if (!collidesAt(newX, newY - getSpeed())) {
+                    setY(newY - getSpeed());
+                    return true;
+                }
+                if (!collidesAt(newX, newY + getSpeed())) {
+                    setY(newY + getSpeed());
+                    return true;
+                }
+                
+                currentPathIndex++;
+                if (currentPathIndex < currentPath.size()) {
+                    setNextPathTarget();
+                    return true;
+                }
+                
+                stuckCounter = 0;
+                return false;
             } else {
-                // If following a path and we hit something (shouldn't happen with A* but just in case),
-                // stop or recalculate.
                 hasTarget = false;
                 targetX = -1;
                 targetY = -1;
                 currentPath = null;
+                stuckCounter = 0;
                 return false;
             }
         } else {
@@ -192,6 +293,7 @@ public class Player extends Entity {
                 currentPathIndex++;
                 if (currentPathIndex < currentPath.size()) {
                     setNextPathTarget();
+                    stuckCounter = 0;
                     return true;
                 }
             }
@@ -205,8 +307,51 @@ public class Player extends Entity {
             targetX = -1;
             targetY = -1;
             currentPath = null;
+            stuckCounter = 0;
             return false;
         }
+    }
+    
+    private void checkStuckAndRecalculate() {
+        if (currentPath == null || !hasTarget) {
+            stuckCounter = 0;
+            return;
+        }
+        
+        double dx = targetX - getX();
+        double dy = targetY - getY();
+        double distToTarget = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distToTarget < 1) {
+            stuckCounter = 0;
+            return;
+        }
+        
+        if (Math.abs(lastPathX - getX()) < 1 && Math.abs(lastPathY - getY()) < 1) {
+            stuckCounter++;
+            if (stuckCounter > 30) {
+                int tileSize = Config.getTileSize();
+                double half = tileSize / 2.0;
+                int startCol = (int) Math.floor((getX() + half) / tileSize);
+                int startRow = (int) Math.floor((getY() + half) / tileSize);
+                int targetCol = (int) Math.floor((targetX + half) / tileSize);
+                int targetRow = (int) Math.floor((targetY + half) / tileSize);
+                
+                List<int[]> newPath = pathFinder.findPath(startCol, startRow, targetCol, targetRow);
+                if (newPath != null && newPath.size() > 1) {
+                    currentPath = newPath;
+                    smoothPath();
+                    currentPathIndex = 1;
+                    setNextPathTarget();
+                    stuckCounter = 0;
+                }
+            }
+        } else {
+            stuckCounter = 0;
+        }
+        
+        lastPathX = getX();
+        lastPathY = getY();
     }
     
     private boolean handleKeyboardMovement() {
@@ -263,17 +408,55 @@ public class Player extends Entity {
     }
     
     private boolean collidesAt(double topLeftX, double topLeftY) {
+        // Check tile collision
+        if (collidesWithTile(topLeftX, topLeftY)) {
+            return true;
+        }
+        
+        // Check tower collision
+        if (arena != null) {
+            return collidesWithTowers(topLeftX, topLeftY);
+        }
+        
+        return false;
+    }
+    
+    private boolean collidesWithTowers(double topLeftX, double topLeftY) {
         int tileSize = Config.getTileSize();
-
         double left = topLeftX + HITBOX_INSET_PX;
         double top = topLeftY + HITBOX_INSET_PX;
         double right = topLeftX + tileSize - HITBOX_INSET_PX;
         double bottom = topLeftY + tileSize - HITBOX_INSET_PX;
-
-        return isWallAt(left, top)
-                || isWallAt(right, top)
-                || isWallAt(left, bottom)
-                || isWallAt(right, bottom);
+        
+        // Check tower collisions
+        for (Tour tower : arena.tours()) {
+            double towerPixelX = tower.position().x() * tileSize;
+            double towerPixelY = tower.position().y() * tileSize;
+            double towerWidth = tower.width() * tileSize;
+            double towerHeight = tower.height() * tileSize;
+            
+            // AABB collision detection
+            if (right > towerPixelX && left < towerPixelX + towerWidth
+                    && bottom > towerPixelY && top < towerPixelY + towerHeight) {
+                return true;
+            }
+        }
+        
+        // Check ancient (base) collisions
+        for (Ancient ancient : arena.ancients()) {
+            double ancientPixelX = ancient.position().x() * tileSize;
+            double ancientPixelY = ancient.position().y() * tileSize;
+            double ancientWidth = ancient.width() * tileSize;
+            double ancientHeight = ancient.height() * tileSize;
+            
+            // AABB collision detection
+            if (right > ancientPixelX && left < ancientPixelX + ancientWidth
+                    && bottom > ancientPixelY && top < ancientPixelY + ancientHeight) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     private boolean isWallAt(double pixelX, double pixelY) {
@@ -282,5 +465,38 @@ public class Player extends Entity {
         int row = (int) Math.floor(pixelY / tileSize);
         int tileId = tileMap.getTileAt(row, col);
         return collisionTable.hasCollision(tileId);
+    }
+    
+    private boolean collidesWithTile(double topLeftX, double topLeftY) {
+        int tileSize = Config.getTileSize();
+        double left = topLeftX + HITBOX_INSET_PX;
+        double top = topLeftY + HITBOX_INSET_PX;
+        double right = topLeftX + tileSize - HITBOX_INSET_PX;
+        double bottom = topLeftY + tileSize - HITBOX_INSET_PX;
+
+        if (isWallAt(left, top)
+                || isWallAt(right, top)
+                || isWallAt(left, bottom)
+                || isWallAt(right, bottom)) {
+            return true;
+        }
+        
+        double centerX = (left + right) / 2;
+        double centerY = (top + bottom) / 2;
+        if (isWallAt(centerX, centerY)) {
+            return true;
+        }
+        
+        double quarterX = left + (right - left) / 4;
+        double quarterY = top + (bottom - top) / 4;
+        double threeQuarterX = left + 3 * (right - left) / 4;
+        double threeQuarterY = top + 3 * (bottom - top) / 4;
+        
+        if (isWallAt(quarterX, quarterY) || isWallAt(threeQuarterX, quarterY)
+                || isWallAt(quarterX, threeQuarterY) || isWallAt(threeQuarterX, threeQuarterY)) {
+            return true;
+        }
+        
+        return false;
     }
 }

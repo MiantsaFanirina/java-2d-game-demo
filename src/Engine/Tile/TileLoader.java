@@ -71,16 +71,24 @@ public class TileLoader {
 
         try {
             int tileId = Integer.parseInt(parts[0]);
+            String colorHex = parts[1];
             String name = parts[2];
             String base64Data = extractBase64(parts);
 
-            BufferedImage image = decodeImage(base64Data);
+            BufferedImage image = null;
+            if (!base64Data.isEmpty()) {
+                image = decodeImage(base64Data);
+            }
             
             String lowerName = name.toLowerCase();
             boolean hasCollision = lowerName.contains("wall")
                     || (lowerName.contains("water") && lowerName.contains("_"));
 
-            return new Tile(tileId, name, image, hasCollision);
+            Tile tile = new Tile(tileId, name, image, hasCollision);
+            if (colorHex.startsWith("#")) {
+                tile.setColor(java.awt.Color.decode(colorHex));
+            }
+            return tile;
 
         } catch (NumberFormatException | IOException e) {
             e.printStackTrace();
