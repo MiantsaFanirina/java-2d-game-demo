@@ -2,18 +2,31 @@ package Engine.Tile;
 
 import java.awt.image.BufferedImage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tile {
 
     private final int id;
     private final String name;
-    private final BufferedImage image;
+    private final List<BufferedImage> images = new ArrayList<>();
     private final boolean collision;
 
     public Tile(int id, String name, BufferedImage image, boolean collision) {
         this.id = id;
         this.name = name;
-        this.image = image;
+        this.images.add(image);
         this.collision = collision;
+    }
+
+    public void addImage(BufferedImage img) {
+        if (img != null) {
+            images.add(img);
+        }
+    }
+
+    public List<BufferedImage> getImages() {
+        return images;
     }
 
     public int getId() {
@@ -25,7 +38,7 @@ public class Tile {
     }
 
     public BufferedImage getImage() {
-        return image;
+        return images.isEmpty() ? null : images.get(0);
     }
 
     public boolean isCollision() {

@@ -2,10 +2,7 @@ package Engine.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Base64;
 
 public class TileLoader {
@@ -32,6 +29,11 @@ public class TileLoader {
                     Tile tile = parseTileLine(trimmed);
                     if (tile != null && tile.getId() >= 0 && tile.getId() < tiles.length) {
                         tiles[tile.getId()] = tile;
+                        
+                        // If it's the specific water tile (ID 5), load extra textures
+                        if (tile.getId() == 5) {
+                            loadExtraWaterTextures(tile);
+                        }
                     }
                 }
             }
@@ -40,6 +42,18 @@ public class TileLoader {
         }
 
         return tiles;
+    }
+
+    private void loadExtraWaterTextures(Tile tile) {
+        String[] extras = {"src/Resource/Tiles/water.png"};
+        for (String path : extras) {
+            try {
+                BufferedImage img = ImageIO.read(new File(path));
+                tile.addImage(img);
+            } catch (IOException e) {
+                System.err.println("Could not load extra water texture: " + path);
+            }
+        }
     }
 
     public boolean[] buildCollisionTable(Tile[] tiles) {
@@ -61,8 +75,10 @@ public class TileLoader {
             String base64Data = extractBase64(parts);
 
             BufferedImage image = decodeImage(base64Data);
-            boolean hasCollision = name.toLowerCase().contains("wall")
-                    || name.toLowerCase().contains("water");
+            
+            String lowerName = name.toLowerCase();
+            boolean hasCollision = lowerName.contains("wall")
+                    || (lowerName.contains("water") && lowerName.contains("_"));
 
             return new Tile(tileId, name, image, hasCollision);
 
