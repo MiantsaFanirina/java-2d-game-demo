@@ -1,9 +1,11 @@
 package Engine.Input;
 
+import Core.Input.MoveInput;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyHandler implements KeyListener {
+public class KeyHandler implements KeyListener, MoveInput {
     
     private boolean upPressed;
     private boolean downPressed;
@@ -24,10 +26,6 @@ public class KeyHandler implements KeyListener {
     
     public boolean isRightPressed() {
         return rightPressed;
-    }
-    
-    public boolean isAnyKeyPressed() {
-        return upPressed || downPressed || leftPressed || rightPressed;
     }
     
     @Override

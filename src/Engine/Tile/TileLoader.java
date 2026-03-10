@@ -1,4 +1,4 @@
-package Core.Tile;
+package Engine.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -30,7 +30,7 @@ public class TileLoader {
 
                 if (inTilesSection) {
                     Tile tile = parseTileLine(trimmed);
-                    if (tile != null) {
+                    if (tile != null && tile.getId() >= 0 && tile.getId() < tiles.length) {
                         tiles[tile.getId()] = tile;
                     }
                 }
@@ -40,6 +40,15 @@ public class TileLoader {
         }
 
         return tiles;
+    }
+
+    public boolean[] buildCollisionTable(Tile[] tiles) {
+        boolean[] collision = new boolean[tiles.length];
+        for (int i = 0; i < tiles.length; i++) {
+            Tile t = tiles[i];
+            collision[i] = t != null && t.isCollision();
+        }
+        return collision;
     }
 
     private Tile parseTileLine(String line) {
@@ -52,8 +61,8 @@ public class TileLoader {
             String base64Data = extractBase64(parts);
 
             BufferedImage image = decodeImage(base64Data);
-            boolean hasCollision = name.toLowerCase().contains("wall") || 
-                                  name.toLowerCase().contains("water");
+            boolean hasCollision = name.toLowerCase().contains("wall")
+                    || name.toLowerCase().contains("water");
 
             return new Tile(tileId, name, image, hasCollision);
 
@@ -78,9 +87,9 @@ public class TileLoader {
 
     private BufferedImage decodeImage(String base64Data) throws IOException {
         byte[] bytes = Base64.getDecoder().decode(base64Data);
-        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        BufferedImage image = ImageIO.read(input);
-        input.close();
-        return image;
+        try (ByteArrayInputStream input = new ByteArrayInputStream(bytes)) {
+            return ImageIO.read(input);
+        }
     }
 }
+

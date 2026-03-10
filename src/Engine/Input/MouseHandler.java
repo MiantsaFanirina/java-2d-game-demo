@@ -1,9 +1,11 @@
 package Engine.Input;
 
+import Core.Input.TargetInput;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MouseHandler extends MouseAdapter {
+public class MouseHandler extends MouseAdapter implements TargetInput {
     
     private int targetX = -1;
     private int targetY = -1;

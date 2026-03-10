@@ -1,4 +1,4 @@
-package Core.Tile;
+package Engine.Tile;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -49,3 +49,4 @@ public class MapParser {
         return new MapData(mapTiles, maxCols, maxRows);
     }
 }
+

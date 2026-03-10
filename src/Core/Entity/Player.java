@@ -1,32 +1,35 @@
 package Core.Entity;
 
 import Core.Config;
-import Core.Tile.TileManager;
-import Engine.Input.KeyHandler;
-import Engine.Input.MouseHandler;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import Core.Input.MoveInput;
+import Core.Input.TargetInput;
+import Core.Tile.CollisionTable;
+import Core.Tile.TileMap;
 
 public class Player extends Entity {
     
-    private final KeyHandler keyHandler;
-    private final MouseHandler mouseHandler;
-    private final TileManager tileManager;
+    private final MoveInput moveInput;
+    private final TargetInput targetInput;
+    private final TileMap tileMap;
+    private final CollisionTable collisionTable;
     
-    private int targetX = -1;
-    private int targetY = -1;
+    // Targets are stored as the desired TOP-LEFT pixel position of the player,
+    // but are derived from mouse clicks on the desired CENTER position.
+    private double targetX = -1;
+    private double targetY = -1;
     private boolean hasTarget = false;
     private Direction targetDirection = Direction.DOWN;
+
+    // Collision hitbox is slightly inset from the sprite bounds to feel better.
+    // Coordinates are in pixels relative to the player's top-left position.
+    private static final double HITBOX_INSET_PX = 6.0;
     
-    public Player(KeyHandler keyHandler, MouseHandler mouseHandler, TileManager tileManager) {
-        this.keyHandler = keyHandler;
-        this.mouseHandler = mouseHandler;
-        this.tileManager = tileManager;
+    public Player(MoveInput moveInput, TargetInput targetInput, TileMap tileMap, CollisionTable collisionTable) {
+        this.moveInput = moveInput;
+        this.targetInput = targetInput;
+        this.tileMap = tileMap;
+        this.collisionTable = collisionTable;
         setDefaultValues();
-        loadPlayerSprites();
     }
     
     private void setDefaultValues() {
@@ -36,35 +39,22 @@ public class Player extends Entity {
         setDirection(Direction.DOWN);
     }
     
-    private void loadPlayerSprites() {
-        try {
-            String path = Config.getPlayerImagePath();
-            setUp1(ImageIO.read(new java.io.File(path + "boy_up_1.png")));
-            setUp2(ImageIO.read(new java.io.File(path + "boy_up_2.png")));
-            setDown1(ImageIO.read(new java.io.File(path + "boy_down_1.png")));
-            setDown2(ImageIO.read(new java.io.File(path + "boy_down_2.png")));
-            setLeft1(ImageIO.read(new java.io.File(path + "boy_left_1.png")));
-            setLeft2(ImageIO.read(new java.io.File(path + "boy_left_2.png")));
-            setRight1(ImageIO.read(new java.io.File(path + "boy_right_1.png")));
-            setRight2(ImageIO.read(new java.io.File(path + "boy_right_2.png")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
     public void update() {
         boolean isMoving = false;
         
-        if (mouseHandler.hasTarget()) {
-            targetX = mouseHandler.getTargetX();
-            targetY = mouseHandler.getTargetY();
+        if (targetInput.hasTarget()) {
+            int tileSize = Config.getTileSize();
+            double half = tileSize / 2.0;
+            // Convert a click (center target) into the player's top-left target.
+            targetX = targetInput.getTargetX() - half;
+            targetY = targetInput.getTargetY() - half;
             hasTarget = true;
-            mouseHandler.clearTarget();
+            targetInput.clearTarget();
         }
         
         if (hasTarget) {
             isMoving = moveToTarget();
-        } else if (keyHandler.isAnyKeyPressed()) {
+        } else if (moveInput.isAnyKeyPressed()) {
             isMoving = handleKeyboardMovement();
         }
         
@@ -74,21 +64,21 @@ public class Player extends Entity {
     }
     
     private boolean moveToTarget() {
-        int dx = targetX - (int) getX();
-        int dy = targetY - (int) getY();
+        double dx = targetX - getX();
+        double dy = targetY - getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
         
         if (distance > getSpeed()) {
-            double ratioX = (double) dx / distance;
-            double ratioY = (double) dy / distance;
+            double ratioX = dx / distance;
+            double ratioY = dy / distance;
             
-            targetDirection = Direction.fromDelta(dx, dy);
+            targetDirection = Direction.fromDelta((int) Math.round(dx), (int) Math.round(dy));
             setDirection(targetDirection);
             
-            int newX = (int) (getX() + ratioX * getSpeed());
-            int newY = (int) (getY() + ratioY * getSpeed());
+            double newX = getX() + ratioX * getSpeed();
+            double newY = getY() + ratioY * getSpeed();
             
-            if (!tileManager.hasCollision(getTileAt(newX, newY))) {
+            if (!collidesAt(newX, newY)) {
                 setX(newX);
                 setY(newY);
                 return true;
@@ -99,8 +89,11 @@ public class Player extends Entity {
                 return false;
             }
         } else {
-            setX(targetX);
-            setY(targetY);
+            // Snap to target only if it's not inside a wall.
+            if (!collidesAt(targetX, targetY)) {
+                setX(targetX);
+                setY(targetY);
+            }
             hasTarget = false;
             targetX = -1;
             targetY = -1;
@@ -109,61 +102,77 @@ public class Player extends Entity {
     }
     
     private boolean handleKeyboardMovement() {
-        if (keyHandler.isUpPressed()) {
-            tryMoveUp();
+        int xAxis = 0;
+        int yAxis = 0;
+
+        if (moveInput.isLeftPressed()) xAxis -= 1;
+        if (moveInput.isRightPressed()) xAxis += 1;
+        if (moveInput.isUpPressed()) yAxis -= 1;
+        if (moveInput.isDownPressed()) yAxis += 1;
+
+        if (xAxis == 0 && yAxis == 0) return false;
+
+        // Choose facing direction for animation.
+        if (xAxis != 0 && yAxis != 0) {
+            // Diagonal: face the dominant axis (stable).
+            if (Math.abs(xAxis) >= Math.abs(yAxis)) {
+                setDirection(xAxis > 0 ? Direction.RIGHT : Direction.LEFT);
+            } else {
+                setDirection(yAxis > 0 ? Direction.DOWN : Direction.UP);
+            }
+        } else if (xAxis != 0) {
+            setDirection(xAxis > 0 ? Direction.RIGHT : Direction.LEFT);
+        } else {
+            setDirection(yAxis > 0 ? Direction.DOWN : Direction.UP);
+        }
+
+        // Normalize so diagonals aren't faster than straight movement.
+        double len = Math.sqrt(xAxis * xAxis + yAxis * yAxis);
+        double stepX = (xAxis / len) * getSpeed();
+        double stepY = (yAxis / len) * getSpeed();
+
+        double currentX = getX();
+        double currentY = getY();
+        double nextX = currentX + stepX;
+        double nextY = currentY + stepY;
+
+        // Try full move; if blocked, try sliding along each axis.
+        if (!collidesAt(nextX, nextY)) {
+            setX(nextX);
+            setY(nextY);
             return true;
         }
-        if (keyHandler.isDownPressed()) {
-            tryMoveDown();
+        if (!collidesAt(nextX, currentY)) {
+            setX(nextX);
             return true;
         }
-        if (keyHandler.isLeftPressed()) {
-            tryMoveLeft();
+        if (!collidesAt(currentX, nextY)) {
+            setY(nextY);
             return true;
         }
-        if (keyHandler.isRightPressed()) {
-            tryMoveRight();
-            return true;
-        }
+
         return false;
     }
     
-    private void tryMoveUp() {
-        int newY = (int) getY() - getSpeed();
-        if (!tileManager.hasCollision(getTileAt((int) getX(), newY))) {
-            moveUp();
-        }
+    private boolean collidesAt(double topLeftX, double topLeftY) {
+        int tileSize = Config.getTileSize();
+
+        double left = topLeftX + HITBOX_INSET_PX;
+        double top = topLeftY + HITBOX_INSET_PX;
+        double right = topLeftX + tileSize - HITBOX_INSET_PX;
+        double bottom = topLeftY + tileSize - HITBOX_INSET_PX;
+
+        return isWallAt(left, top)
+                || isWallAt(right, top)
+                || isWallAt(left, bottom)
+                || isWallAt(right, bottom);
     }
-    
-    private void tryMoveDown() {
-        int newY = (int) getY() + getSpeed();
-        if (!tileManager.hasCollision(getTileAt((int) getX(), newY))) {
-            moveDown();
-        }
-    }
-    
-    private void tryMoveLeft() {
-        int newX = (int) getX() - getSpeed();
-        if (!tileManager.hasCollision(getTileAt(newX, (int) getY()))) {
-            moveLeft();
-        }
-    }
-    
-    private void tryMoveRight() {
-        int newX = (int) getX() + getSpeed();
-        if (!tileManager.hasCollision(getTileAt(newX, (int) getY()))) {
-            moveRight();
-        }
-    }
-    
-    private int getTileAt(int x, int y) {
-        int col = x / Config.getTileSize();
-        int row = y / Config.getTileSize();
-        return tileManager.getTileAt(row, col);
-    }
-    
-    public void draw(Graphics2D g2) {
-        BufferedImage image = getCurrentSprite();
-        g2.drawImage(image, (int) getX(), (int) getY(), Config.getTileSize(), Config.getTileSize(), null);
+
+    private boolean isWallAt(double pixelX, double pixelY) {
+        int tileSize = Config.getTileSize();
+        int col = (int) Math.floor(pixelX / tileSize);
+        int row = (int) Math.floor(pixelY / tileSize);
+        int tileId = tileMap.getTileAt(row, col);
+        return collisionTable.hasCollision(tileId);
     }
 }
