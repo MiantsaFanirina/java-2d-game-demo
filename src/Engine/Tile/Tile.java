@@ -12,6 +12,7 @@ public class Tile {
     private final List<BufferedImage> images = new ArrayList<>();
     private final boolean collision;
     private java.awt.Color color;
+    private Object userData; // For caching sprite frames, etc.
 
     public Tile(int id, String name, BufferedImage image, boolean collision) {
         this.id = id;
@@ -54,6 +55,14 @@ public class Tile {
 
     public boolean isCollision() {
         return collision;
+    }
+    
+    public void setUserData(Object data) {
+        this.userData = data;
+    }
+    
+    public Object getUserData() {
+        return userData;
     }
 }
 

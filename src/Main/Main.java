@@ -1,6 +1,6 @@
 package Main;
 
-import Core.Database.util.DatabaseInitializer;
+import Core.Database.util .DatabaseInitializer;
 import Engine.GamePanel;
 import javax.swing.*;
 

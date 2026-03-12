@@ -1,9 +1,11 @@
 package Engine.Tile;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
+import Core.Moba.World.TeamColor;
 
 public class TileLoader {
 
@@ -41,7 +43,7 @@ public class TileLoader {
                         if (tile.getId() == 23) {
                             loadAncientRedTextures(tile);
                         }
-                        // Load tower textures
+                        // Load tower textures from spritesheet
                         if (tile.getId() == 20) {
                             loadTowerBlueTextures(tile);
                         }
@@ -95,27 +97,106 @@ public class TileLoader {
     }
 
     private void loadTowerBlueTextures(Tile tile) {
-        String[] extras = {"src/Resource/Tiles/Tower_Blue.png"};
+        // Load the new Tower-sheet.png spritesheet and cache team-colored frames
+        String[] extras = {"src/Resource/Tower/Tower-sheet.png"};
         for (String path : extras) {
             try {
                 BufferedImage img = ImageIO.read(new File(path));
-                tile.addImage(img);
+                // Cache pre-processed blue team frames
+                tile.setUserData(cacheTowerFrames(img, TeamColor.BLUE));
             } catch (IOException e) {
-                System.err.println("Could not load tower blue texture: " + path);
+                System.err.println("Could not load tower sheet texture: " + path);
             }
         }
     }
 
     private void loadTowerRedTextures(Tile tile) {
-        String[] extras = {"src/Resource/Tiles/Tower_Red.png"};
+        // Load the new Tower-sheet.png spritesheet and cache team-colored frames
+        String[] extras = {"src/Resource/Tower/Tower-sheet.png"};
         for (String path : extras) {
             try {
                 BufferedImage img = ImageIO.read(new File(path));
-                tile.addImage(img);
+                // Cache pre-processed red team frames
+                tile.setUserData(cacheTowerFrames(img, TeamColor.RED));
             } catch (IOException e) {
-                System.err.println("Could not load tower red texture: " + path);
+                System.err.println("Could not load tower sheet texture: " + path);
             }
         }
+    }
+
+    /**
+     * Cache tower animation frames from the spritesheet.
+     * Spritesheet structure (isometric 64x96 or 64x128):
+     * Row 0: Activation/Spawning (frames 1-6) - 6 frames
+     * Row 1: Idle/Hover cycle (8 frames)
+     * Row 2: Charging/Firing (7 frames) - total 21 frames
+     */
+    private BufferedImage[] cacheTowerFrames(BufferedImage spritesheet, TeamColor teamColor) {
+        if (spritesheet == null) return new BufferedImage[0];
+        
+        int frameWidth = 64;  // Isometric width
+        int frameHeight = 96; // Base height
+        int cols = spritesheet.getWidth() / frameWidth;
+        
+        // Total frames: Row 0 (6), Row 1 (8), Row 2 (7) = 21 frames
+        BufferedImage[] frames = new BufferedImage[21];
+        
+        for (int row = 0; row < 3; row++) {
+            int framesInRow = (row == 0) ? 6 : (row == 1) ? 8 : 7;
+            for (int col = 0; col < framesInRow; col++) {
+                int frameIndex = (row == 0) ? col : (row == 1) ? 6 + col : 14 + col;
+                int x = col * frameWidth;
+                int y = row * frameHeight;
+                
+                // Extract frame
+                BufferedImage frame = spritesheet.getSubimage(x, y, frameWidth, frameHeight);
+                
+                // Apply team color mask
+                frames[frameIndex] = applyTeamColorMask(frame, teamColor);
+            }
+        }
+        
+        return frames;
+    }
+    
+    /**
+     * Apply team color mask to tower sprite with transparency.
+     * Uses a subtle tint (30% team color) to preserve original shading.
+     */
+    private BufferedImage applyTeamColorMask(BufferedImage frame, TeamColor teamColor) {
+        BufferedImage colored = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Color teamColorRGB = (teamColor == TeamColor.BLUE) 
+            ? new Color(0x42, 0x99, 0xe1)  // Blue
+            : new Color(0xf5, 0x65, 0x65); // Red
+        
+        // Blend factor: 0.3 = 30% team color, 70% original
+        final double BLEND_FACTOR = 0.3;
+            
+        for (int y = 0; y < frame.getHeight(); y++) {
+            for (int x = 0; x < frame.getWidth(); x++) {
+                int argb = frame.getRGB(x, y);
+                int alpha = (argb >> 24) & 0xff;
+                int r = (argb >> 16) & 0xff;
+                int g = (argb >> 8) & 0xff;
+                int b = argb & 0xff;
+                
+                if (alpha > 0) {
+                    // Detect dark sphere area (tower orb) - apply subtle team color tint
+                    int brightness = (r + g + b) / 3;
+                    if (brightness < 100) { // Dark pixels are the orb
+                        // Blend team color with original
+                        int newR = (int)(r * (1 - BLEND_FACTOR) + teamColorRGB.getRed() * BLEND_FACTOR);
+                        int newG = (int)(g * (1 - BLEND_FACTOR) + teamColorRGB.getGreen() * BLEND_FACTOR);
+                        int newB = (int)(b * (1 - BLEND_FACTOR) + teamColorRGB.getBlue() * BLEND_FACTOR);
+                        colored.setRGB(x, y, (alpha << 24) | (newR << 16) | (newG << 8) | newB);
+                    } else {
+                        // Keep original for highlights and base
+                        colored.setRGB(x, y, argb);
+                    }
+                }
+            }
+        }
+        return colored;
     }
 
     public boolean[] buildCollisionTable(Tile[] tiles) {
@@ -178,4 +259,3 @@ public class TileLoader {
         }
     }
 }
-

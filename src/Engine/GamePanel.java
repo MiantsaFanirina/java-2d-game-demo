@@ -251,6 +251,11 @@ public class GamePanel extends JPanel {
         // Dessin du monde
         tileRenderer.draw(g2, camera, getWidth(), getHeight());
         
+        // Update tower animations
+        for (Tour tour : arena.tours()) {
+            tour.updateAnimation();
+        }
+        
         // Only draw player if alive
         if (player.isAlive()) {
             playerRenderer.draw(g2, player);

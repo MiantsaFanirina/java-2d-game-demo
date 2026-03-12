@@ -95,13 +95,21 @@ Spell system.
 ##### `Core.Moba.Units`
 Game units.
 - `Unite` : Base class for all units
-- `Tour` : Defensive towers
+- `Tour` : Defensive towers with animation states (idle/attack)
+- `TowerAI` : AI controlling tower targeting and attack timing
+- `TowerProjectile` : Projectile fired by towers (spawns 12.5px below tower top)
 - `Ancient` : Main bases (Nexus)
 - `Minion` : Generated units (creeps)
 - `Heros` : Controllable heroes
 - `Creep` : Neutral units
 - `RespawnTimer` : Respawn timer
 - `RecallState` : Recall (back to base) state
+
+**Tower Animation System (`Tour.java`)**:
+- Frame 6-13: Idle animation loop (8 frames)
+- Frame 14-20: Attack animation sequence (7 frames)
+- Fireball launches at frame 17 (mid-animation)
+- Animation completes at frame 20, returns to idle
 
 ##### `Core.Moba.World`
 World elements.
@@ -143,7 +151,7 @@ Graphics rendering system.
 - `TileRenderer` : Tile rendering with culling
 - `PlayerRenderer` : Player sprite rendering
 - `PlayerSprites` : Player image loading
-- `TowerRenderer` : Tower and building rendering
+- `TowerRenderer` : Tower rendering with sprite animations (21 frames: idle 6-13, attack 14-20). Renders towers centered on 2x2 tile blocks, health bar positioned above tower (4px tall, 10px padding).
 - `ClickEffect` : Click ground visual effect
 
 #### `Engine.Tile`

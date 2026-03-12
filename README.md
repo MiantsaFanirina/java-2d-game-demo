@@ -33,7 +33,10 @@ This project is a fully functional 2D MOBA game engine with smooth movement, A* 
 ### MOBA Architecture
 - **Arena system**: Two teams (Blue/Red)
 - **Lanes**: Top, Mid, Bottom
-- **Towers**: Towers with tiers (Tier 1, 2, 3)
+- **Towers**: Tiered defensive structures with attack animations
+  - Idle animation: Orb hovering cycle
+  - Attack animation: Charge-up sequence with orb expansion
+  - Projectile launch at midpoint of attack animation
 - **Bases**: Ancients (main structures)
 - **Extensible system**: Units, spells, equipment
 

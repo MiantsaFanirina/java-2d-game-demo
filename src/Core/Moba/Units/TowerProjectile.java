@@ -32,10 +32,10 @@ public final class TowerProjectile {
 
         int tileSize = Config.getTileSize();
         Vec2 posTourTiles = tour.position();
-        // Spawn from top middle of tower (accounts for tower width/height)
+        // Spawn from top middle of tower, offset down by 12.5 pixels
         this.position = new Vec2(
             posTourTiles.x() * tileSize + (tour.width() * tileSize) / 2.0,
-            posTourTiles.y() * tileSize
+            posTourTiles.y() * tileSize + 12.5
         );
 
         if (cible != null) {

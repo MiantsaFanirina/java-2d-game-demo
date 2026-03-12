@@ -17,6 +17,18 @@ public class Tour extends Unite {
     private int portee;
     private TowerAI ai;
     private final List<TowerProjectile> projectiles;
+    
+    // Animation state
+    private AnimationState animationState = AnimationState.IDLE;
+    private int animationFrame = 0;
+    private long animationTimer = 0;
+    private static final int FRAME_DELAY_MS = 100;
+    private boolean attackReady = false;
+    
+    private enum AnimationState {
+        IDLE,
+        ATTACK
+    }
 
     public Tour(Equipe equipe, Vec2 position, int hp, int armure, int attaque, int portee) {
         super(position, new Stats(hp, 0, attaque, armure, 0.0));
@@ -26,6 +38,11 @@ public class Tour extends Unite {
         this.lane = Voie.MID;
         this.projectiles = new ArrayList<>();
         this.ai = new TowerAI(this);
+        // Initialize animation state
+        this.animationState = AnimationState.IDLE;
+        this.animationFrame = 6; // Start at first idle frame
+        this.animationTimer = System.currentTimeMillis();
+        this.attackReady = false;
     }
 
     public Tour(Equipe equipe, Vec2 position, int hp, int armure, int attaque, int portee, int tier, Voie lane, int w, int h) {
@@ -114,6 +131,60 @@ public class Tour extends Unite {
             p.mettreAJour(deltaSeconds);
             return p.aFini();
         });
+    }
+    
+    // Animation methods
+    public void updateAnimation() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - animationTimer >= FRAME_DELAY_MS) {
+            animationTimer = currentTime;
+            
+            switch (animationState) {
+                case IDLE:
+                    // Idle frames: 6-13 (8 frames)
+                    animationFrame = (animationFrame + 1) % 8 + 6;
+                    break;
+                case ATTACK:
+                    // Attack frames: 14-20 (7 frames)
+                    if (animationFrame < 20) {
+                        animationFrame++;
+                        // Fire projectile at frame 17 (middle of animation)
+                        if (animationFrame == 17 && !attackReady) {
+                            attackReady = true; // Signal to fire
+                        }
+                    } else {
+                        // Animation complete, return to idle
+                        setIdle();
+                    }
+                    break;
+            }
+        }
+    }
+    
+    public int getCurrentFrame() {
+        return animationFrame;
+    }
+    
+    public void startAttackAnimation() {
+        if (animationState == AnimationState.IDLE) {
+            animationState = AnimationState.ATTACK;
+            animationFrame = 14; // Start at first attack frame
+            attackReady = false;
+        }
+    }
+    
+    public boolean isAttackReady() {
+        return attackReady;
+    }
+    
+    public void resetAttackReady() {
+        attackReady = false;
+    }
+    
+    public void setIdle() {
+        animationState = AnimationState.IDLE;
+        animationFrame = 6; // Start idle at frame 6
+        attackReady = false;
     }
 }
 

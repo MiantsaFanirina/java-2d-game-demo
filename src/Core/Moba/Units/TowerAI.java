@@ -31,28 +31,6 @@ public final class TowerAI {
         return cible;
     }
 
-    public boolean peutAttaquer() {
-        if (cible == null) return false;
-        if (cible instanceof Unite unite) {
-            return !unite.estMorte() && estDansPortee(cible);
-        } else if (cible instanceof Player player) {
-            return !player.estMorte() && estDansPortee(cible);
-        }
-        return false;
-    }
-
-    public boolean doitAttaquer(double deltaSeconds) {
-        if (cible == null) return false;
-        if (cible instanceof Unite unite && unite.estMorte()) return false;
-        if (cible instanceof Player player && player.estMorte()) return false;
-        tempsDerniereAttaque += deltaSeconds;
-        if (tempsDerniereAttaque >= cooldownAttaque) {
-            tempsDerniereAttaque = 0;
-            return true;
-        }
-        return false;
-    }
-
     public int calculerDegats() {
         int baseDegats = tour.stats().attack();
         double multiplicateur = 1.0 + (hitsConsecutifs * 0.1);
@@ -93,34 +71,49 @@ public final class TowerAI {
         cible = null;
         chercherCible(unites);
     }
-
-    public void declencherAggro(Object uniteAttaquant) {
-        if (uniteAttaquant == null) return;
-        
-        Equipe equipeAttaquant = getEquipe(uniteAttaquant);
-        if (equipeAttaquant == null) return;
-        if (equipeAttaquant == tour.equipe()) return;
-
-        Equipe equipeTour = tour.equipe();
-        if (equipeTour == null) return;
-
-        TeamColor couleurTour = equipeTour.couleur();
-        TeamColor couleurAttaquant = equipeAttaquant.couleur();
-
-        if (couleurTour == couleurAttaquant) return;
-
-        timerAggro = TEMPS_AGGRO;
-    }
-
-    public void ciblerHeroAllieEnDanger(Object heroAllie) {
-        if (heroAllie == null) return;
-        
-        Equipe equipeHero = getEquipe(heroAllie);
-        if (equipeHero != tour.equipe()) return;
-
-        if (estDansPortee(heroAllie)) {
-            timerAggro = TEMPS_AGGRO;
+    
+    public boolean peutAttaquer() {
+        if (cible == null) return false;
+        if (cible instanceof Unite unite) {
+            return !unite.estMorte() && estDansPortee(cible);
+        } else if (cible instanceof Player player) {
+            return !player.estMorte() && estDansPortee(cible);
         }
+        return false;
+    }
+    
+    public boolean doitAttaquer(double deltaSeconds) {
+        // Update cooldown
+        if (tempsDerniereAttaque > 0) {
+            tempsDerniereAttaque -= deltaSeconds;
+        }
+        
+        // If target is invalid, reset to idle if we're in attack animation
+        if (cible == null || 
+            (cible instanceof Unite unite && unite.estMorte()) ||
+            (cible instanceof Player player && player.estMorte())) {
+            if (tour.getCurrentFrame() > 13) {
+                tour.setIdle();
+                tour.resetAttackReady();
+            }
+            return false;
+        }
+        
+        // If attack animation is complete, signal to fire
+        if (tour.isAttackReady()) {
+            return true;
+        }
+        
+        // If tower is idle and ready to attack (cooldown expired), start attack animation
+        if (tempsDerniereAttaque <= 0 && peutAttaquer()) {
+            int frame = tour.getCurrentFrame();
+            if (frame >= 6 && frame <= 13) { // Idle frame range
+                tour.startAttackAnimation();
+                tempsDerniereAttaque = cooldownAttaque;
+            }
+        }
+        
+        return false;
     }
 
     private void chercherCible(List<Object> unites) {
