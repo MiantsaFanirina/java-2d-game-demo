@@ -192,12 +192,11 @@ public class GamePanel extends JPanel {
 
         // Dessin du monde
         tileRenderer.draw(g2, camera, getWidth(), getHeight());
+        playerRenderer.draw(g2, player);
         drawTowers(g2);
         drawAncients(g2);
         drawProjectiles(g2);
         drawClickEffects(g2);
-        if (player.isAlive()) {
-            playerRenderer.draw(g2, player);
         }
 
         g2.setTransform(oldTransform);
