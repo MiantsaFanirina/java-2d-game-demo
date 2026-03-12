@@ -63,10 +63,7 @@ public class GamePanel extends JPanel {
         // Création du joueur
         player = createPlayer(tileMap, collisionTable, arena);
         playerRenderer = new PlayerRenderer(new PlayerSprites());
-        
-        TowerSprites towerSprites = new TowerSprites();
         towerRenderer = createTowerRenderer(tiles);
-        towerRenderer.setTowerSprites(towerSprites);
         
         setupInputListeners();
         setupResizeListener();
@@ -164,7 +161,6 @@ public class GamePanel extends JPanel {
     
     private void renderLoop() {
         while (true) {
-            towerRenderer.updateAnimation();
             repaint();
             try {
                 Thread.sleep(16);
