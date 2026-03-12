@@ -9,39 +9,55 @@ import java.io.File;
 import java.io.IOException;
 
 public class PlayerSprites {
-    private final BufferedImage up1;
-    private final BufferedImage up2;
-    private final BufferedImage down1;
-    private final BufferedImage down2;
-    private final BufferedImage left1;
-    private final BufferedImage left2;
-    private final BufferedImage right1;
-    private final BufferedImage right2;
+    private final BufferedImage[][] sprites; // [direction][frame]
+    private static final int SPRITE_SIZE = 32;
+    private static final int FRAMES_PER_DIRECTION = 6;
+    
+    // Direction column offsets in spritesheet (0-indexed)
+    private static final int COL_SOUTH = 0;   // Facing South (front)
+    private static final int COL_EAST = 6;    // Facing East (right)
+    private static final int COL_NORTH = 12;  // Facing North (back)
+    private static final int COL_WEST = 18;   // Facing West (left)
+    
+    // Row 0: Masculine, Light skin tone
+    private static final int ROW = 0;
 
     public PlayerSprites() {
         String path = Config.getPlayerImagePath();
+        sprites = new BufferedImage[4][FRAMES_PER_DIRECTION];
+        
         try {
-            up1 = ImageIO.read(new File(path + "boy_up_1.png"));
-            up2 = ImageIO.read(new File(path + "boy_up_2.png"));
-            down1 = ImageIO.read(new File(path + "boy_down_1.png"));
-            down2 = ImageIO.read(new File(path + "boy_down_2.png"));
-            left1 = ImageIO.read(new File(path + "boy_left_1.png"));
-            left2 = ImageIO.read(new File(path + "boy_left_2.png"));
-            right1 = ImageIO.read(new File(path + "boy_right_1.png"));
-            right2 = ImageIO.read(new File(path + "boy_right_2.png"));
+            BufferedImage sheet = ImageIO.read(new File(path + "Character Model.png"));
+            
+            // Extract sprites for each direction
+            // Directions: DOWN, RIGHT, UP, LEFT (matching game's Direction enum)
+            extractDirectionFrames(sheet, ROW, COL_SOUTH, 0);  // DOWN
+            extractDirectionFrames(sheet, ROW, COL_EAST, 1);   // RIGHT
+            extractDirectionFrames(sheet, ROW, COL_NORTH, 2); // UP
+            extractDirectionFrames(sheet, ROW, COL_WEST, 3);  // LEFT
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load player sprites from " + path, e);
+            throw new RuntimeException("Failed to load player spritesheet from " + path + "Character Model.png", e);
+        }
+    }
+    
+    private void extractDirectionFrames(BufferedImage sheet, int row, int startCol, int dirIndex) {
+        for (int frame = 0; frame < FRAMES_PER_DIRECTION; frame++) {
+            int x = (startCol + frame) * SPRITE_SIZE;
+            int y = row * SPRITE_SIZE;
+            sprites[dirIndex][frame] = sheet.getSubimage(x, y, SPRITE_SIZE, SPRITE_SIZE);
         }
     }
 
     public BufferedImage get(Direction direction, int spriteNum) {
-        int frame = spriteNum == 1 ? 1 : 2;
-        return switch (direction) {
-            case UP -> frame == 1 ? up1 : up2;
-            case DOWN -> frame == 1 ? down1 : down2;
-            case LEFT -> frame == 1 ? left1 : left2;
-            case RIGHT -> frame == 1 ? right1 : right2;
+        // spriteNum cycles 1-6, map to 0-5 index
+        int frameIndex = (spriteNum - 1) % FRAMES_PER_DIRECTION;
+        int dirIndex = switch (direction) {
+            case DOWN -> 0;
+            case RIGHT -> 1;
+            case UP -> 2;
+            case LEFT -> 3;
         };
+        return sprites[dirIndex][frameIndex];
     }
 }
 
