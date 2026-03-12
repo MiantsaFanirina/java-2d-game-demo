@@ -28,7 +28,7 @@ public class PlayerRenderer {
         int y = (int) player.getY() - 20;
         g2.setColor(java.awt.Color.YELLOW);
         java.awt.Font originalFont = g2.getFont();
-        g2.setFont(originalFont.deriveFont(java.awt.Font.BOLD));
+        g2.setFont(originalFont.deriveFont(java.awt.Font.BOLD, 14)); // Larger bold font
         g2.drawString("Lv " + player.level(), x, y);
         g2.setFont(originalFont);
     }
