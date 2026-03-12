@@ -143,23 +143,50 @@ public class HeroSelectionPanel extends JPanel {
             return;
         }
         
+        // Check confirm button
+        if (selectedHero != null && button == MouseEvent.BUTTON1) {
+            String btnText = "▶ START GAME WITH " + selectedHero.getName().toUpperCase();
+            Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 14);
+            FontMetrics fm = getFontMetrics(btnFont);
+            int btnW = fm.stringWidth(btnText) + 40;
+            int btnH = 36;
+            int btnX = (getWidth() - btnW) / 2;
+            int btnY = getHeight() - 60;
+            
+            if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
+                if (listener != null) {
+                    listener.onHeroSelected(selectedHero);
+                }
+                return;
+            }
+        }
+        
         // Check hero cards
-        int cols = calculateColumns();
-        int cardWidth = CARD_WIDTH;
-        int cardHeight = CARD_HEIGHT;
-        int spacing = CARD_SPACING;
-        
-        int totalWidth = cols * cardWidth + (cols - 1) * spacing;
-        int startX = (getWidth() - totalWidth) / 2;
-        int startY = categoryTabHeight + 60;
-        
-        int row = (y - startY) / (cardHeight + spacing);
-        int col = (x - startX) / (cardWidth + spacing);
-        
-        int index = row * cols + col;
-        if (index >= 0 && index < filteredHeroes.size()) {
-            // Left click to select
-            if (button == MouseEvent.BUTTON1) {
+        if (button == MouseEvent.BUTTON1) {
+            int cols = calculateColumns();
+            int cardW = CARD_WIDTH;
+            int cardH = CARD_HEIGHT;
+            int spacing = CARD_SPACING;
+            
+            int gridWidth = cols * cardW + (cols - 1) * spacing;
+            int startX = (getWidth() - gridWidth) / 2;
+            int startY = categoryTabHeight + 60;
+            
+            // Calculate which card was clicked
+            int adjustedX = x - startX;
+            int adjustedY = y - startY;
+            
+            if (adjustedX < 0 || adjustedY < 0) return;
+            
+            int col = adjustedX / (cardW + spacing);
+            int row = adjustedY / (cardH + spacing);
+            
+            // Check if click is within card bounds (not in spacing)
+            if (adjustedX % (cardW + spacing) >= cardW) return;
+            if (adjustedY % (cardH + spacing) >= cardH) return;
+            
+            int index = row * cols + col;
+            if (index >= 0 && index < filteredHeroes.size()) {
                 selectedIndex = index;
                 selectedHero = filteredHeroes.get(index);
                 repaint();
