@@ -1,160 +1,160 @@
-# Documentation Technique Complète
+# Complete Technical Documentation
 
-## Table des Matières
+## Table of Contents
 
-1. [Vue d'Ensemble](#vue-densemble)
-2. [Structure des Packages](#structure-des-packages)
-3. [Classes Principales](#classes-principales)
-4. [Systèmes de Jeu](#systèmes-de-jeu)
-5. [Algorithmes](#algorithmes)
-6. [Guide de Développement](#guide-de-développement)
-
----
-
-## Vue d'Ensemble
-
-Ce projet est un moteur de jeu MOBA 2D écrit en Java pur utilisant l'API Java2D de Swing. Il implémente toutes les fonctionnalités de base d'un jeu MOBA :
-
-- Déplacement fluide avec pathfinding
-- Système de collision robuste
-- Caméra avec zoom et scrolling
-- Rendu optimisé avec culling
-- Architecture extensible pour les unités MOBA
+1. [Overview](#overview)
+2. [Package Structure](#package-structure)
+3. [Main Classes](#main-classes)
+4. [Game Systems](#game-systems)
+5. [Algorithms](#algorithms)
+6. [Development Guide](#development-guide)
 
 ---
 
-## Structure des Packages
+## Overview
+
+This project is a 2D MOBA game engine written in pure Java using Java2D Swing. It implements all basic MOBA features:
+
+- Smooth movement with pathfinding
+- Robust collision system
+- Camera with zoom and scrolling
+- Optimized rendering with culling
+- Extensible architecture for MOBA units
+
+---
+
+## Package Structure
 
 ### `src/Main/`
 
-Point d'entrée de l'application.
+Application entry point.
 
-| Fichier | Description |
-|---------|-------------|
-| `Main.java` | Classe principale avec la méthode `main()` |
+| File | Description |
+|-------|-------------|
+| `Main.java` | Main class with `main()` method |
 
 ### `src/Core/`
 
-Logique métier indépendante du moteur graphique.
+Business logic independent of graphics engine.
 
 #### `Core.Config`
-Centralise toutes les constantes de configuration du jeu.
+All game configuration constants.
 
 #### `Core.Entity`
-Gestion des entités et de la physique.
+Entity and physics management.
 
-| Classe | Description |
-|--------|-------------|
-| `Entity` | Classe de base abstraite pour toutes les entités |
-| `Player` | Le joueur contrôlé par l'utilisateur |
-| `PlayerMovement` | Logique complète de mouvement (clavier + souris) |
-| `PathFollower` | Gestion du pathfinding et suivi de chemin |
-| `CollisionDetector` | Détection des collisions avec le monde |
-| `Direction` | Énumération des directions cardinales |
-| `MathUtils` | Fonctions mathématiques utilitaires |
-| `HitboxUtils` | Utilitaires pour les boites de collision |
-| `TileUtils` | Conversions entre pixels et tuiles |
+| Class | Description |
+|-------|-------------|
+| `Entity` | Abstract base class for all entities |
+| `Player` | User-controlled player |
+| `PlayerMovement` | Complete movement logic (keyboard + mouse) |
+| `PathFollower` | Pathfinding and path following |
+| `CollisionDetector` | World collision detection |
+| `Direction` | Cardinal direction enum |
+| `MathUtils` | Math utility functions |
+| `HitboxUtils` | Collision box utilities |
+| `TileUtils` | Pixel-tile conversions |
 
 #### `Core.Input`
-Interfaces pour découpler les entrées.
+Input interfaces for decoupling.
 
 | Interface | Description |
 |-----------|-------------|
-| `MoveInput` | Interface pour le mouvement clavier |
-| `TargetInput` | Interface pour le ciblage souris |
+| `MoveInput` | Keyboard movement interface |
+| `TargetInput` | Mouse targeting interface |
 
 #### `Core.Match`
-Systèmes liés au gameplay.
+Gameplay systems.
 
-| Classe | Description |
-|--------|-------------|
-| `PathFinder` | Implémentation de l'algorithme A* |
+| Class | Description |
+|-------|-------------|
+| `PathFinder` | A* algorithm implementation |
 
 #### `Core.Moba`
-Logique spécifique au genre MOBA.
+MOBA-specific logic.
 
 ##### `Core.Moba.Combat`
-Système de combat.
-- `Stats` : Statistiques (vie, mana, dégats, etc.)
-- `StatsModifier` : Modificateurs de statistiques
+Combat system.
+- `Stats` : Stats (health, mana, damage, etc.)
+- `StatsModifier` : Stat modifiers
 
 ##### `Core.Moba.Items`
-Système d'items.
-- `Equipement` : Équipement portable
-- `EquipementTier` : Niveaux d'équipement
+Item system.
+- `Equipement` : Wearable equipment
+- `EquipementTier` : Equipment tiers
 
 ##### `Core.Moba.Match`
-Gestion de partie.
-- `Partie` : Gestionnaire de partie en cours
+Match management.
+- `Partie` : Ongoing match manager
 
 ##### `Core.Moba.Spells`
-Système de sorts.
-- `Sort` : Représentation d'un sort
-- `SortContext` : Contexte d'exécution d'un sort
+Spell system.
+- `Sort` : Spell representation
+- `SortContext` : Spell execution context
 
 ##### `Core.Moba.Units`
-Unités du jeu.
-- `Unite` : Classe de base pour toutes les unités
-- `Tour` : Tours défensives
-- `Ancient` : Bases principales (Nexus)
-- `Minion` : Unitée générées ( creeps )
-- `Heros` : Héros contrôlables
-- `Creep` : Unités neutres
-- `RespawnTimer` : Timer de résurrection
-- `RecallState` : État de rappel (back to base)
+Game units.
+- `Unite` : Base class for all units
+- `Tour` : Defensive towers
+- `Ancient` : Main bases (Nexus)
+- `Minion` : Generated units (creeps)
+- `Heros` : Controllable heroes
+- `Creep` : Neutral units
+- `RespawnTimer` : Respawn timer
+- `RecallState` : Recall (back to base) state
 
 ##### `Core.Moba.World`
-Éléments du monde.
-- `Arena` : L'arène complète avec tours et bases
-- `Equipe` : Une équipe (Radiant/Dire)
-- `Base` : Structure de base avec PV
-- `Fontaine` : Zone de régénération
-- `Vec2` : Vecteur 2D pour les positions
-- `TeamColor` : Couleur d'équipe (BLEU/ROUGE)
-- `Voie` : Lanes du jeu (TOP/MID/BOT)
+World elements.
+- `Arena` : Complete arena with towers and bases
+- `Equipe` : Team (Radiant/Dire)
+- `Base` : Base structure with HP
+- `Fontaine` : Regeneration zone
+- `Vec2` : 2D position vector
+- `TeamColor` : Team color (BLUE/RED)
+- `Voie` : Lanes (TOP/MID/BOT)
 
 ##### `Core.Moba.Ids`
-Système d'identification.
-- `GameId` : Générateur d'IDs uniques
+Identification system.
+- `GameId` : Unique ID generator
 
 #### `Core.Tile`
-Gestion de la carte.
-- `TileMap` : Représentation de la carte en mémoire
-- `CollisionTable` : Table de collision des tuiles
+Map management.
+- `TileMap` : In-memory map representation
+- `CollisionTable` : Tile collision table
 
 ### `src/Engine/`
 
-Moteur de jeu et rendu graphique.
+Game engine and graphics rendering.
 
 #### `Engine.GamePanel`
-Panel Swing principal, gère l'affichage et l'initialisation.
+Main Swing panel, handles display and initialization.
 
 #### `Engine.GameEngine`
-Boucle de jeu principale à 60 FPS.
+Main game loop at 60 FPS.
 
 #### `Engine.Input`
-Gestionnaires d'entrées.
-- `KeyHandler` : Écoute les événements clavier
-- `MouseHandler` : Écoute les événements souris
+Input handlers.
+- `KeyHandler` : Keyboard event listener
+- `MouseHandler` : Mouse event listener
 
 #### `Engine.Render`
-Système de rendu graphique.
-- `Camera` : Gestion de la vue (zoom, pan)
-- `TileRenderer` : Rendu des tuiles avec culling
-- `PlayerRenderer` : Rendu du sprite du joueur
-- `PlayerSprites` : Chargement des images du joueur
-- `TowerRenderer` : Rendu des tours et bâtiments
-- `ClickEffect` : Effet visuel de clic
+Graphics rendering system.
+- `Camera` : View management (zoom, pan)
+- `TileRenderer` : Tile rendering with culling
+- `PlayerRenderer` : Player sprite rendering
+- `PlayerSprites` : Player image loading
+- `TowerRenderer` : Tower and building rendering
+- `ClickEffect` : Click ground visual effect
 
 #### `Engine.Tile`
-Chargement des ressources graphiques.
-- `Tile` : Représentation d'une tuile
-- `TileLoader` : Chargeur de tuiles depuis un fichier
-- `MapParser` : Parseur du fichier de carte
+Resource loading.
+- `Tile` : Tile representation
+- `TileLoader` : Tile loader from file
+- `MapParser` : Map file parser
 
 ---
 
-## Classes Principales
+## Main Classes
 
 ### `Core.Entity.Player`
 
@@ -168,61 +168,59 @@ public class Player extends Entity {
 }
 ```
 
-**Responsabilités** :
-- Gérer l'état du joueur
-- Déléguer le mouvement à `PlayerMovement`
-- Mettre à jour l'animation du sprite
+**Responsibilities**:
+- Manage player state
+- Delegate movement to `PlayerMovement`
+- Update sprite animation
 
-**Dépendances** :
-- `MoveInput` : Interface clavier
-- `TargetInput` : Interface souris
-- `CollisionDetector` : Détection des collisions
+**Dependencies**:
+- `MoveInput` : Keyboard interface
+- `TargetInput` : Mouse interface
+- `CollisionDetector` : Collision detection
 - `PathFollower` : Pathfinding
 
 ---
 
 ### `Core.Entity.PlayerMovement`
 
-C'est le cœur du système de mouvement. Gère :
+This is the core of the movement system. Manages:
 
-1. **Clic souris** : `processMouseClick()`
-   - Vérifie si le chemin est dégagé
-   - Lance le pathfinding si nécessaire
-   - Définit la cible
+1. **Mouse click** : `processMouseClick()`
+   - Check if path is clear
+   - Launch pathfinding if needed
+   - Set target
 
-2. **Mouvement vers cible** : `moveToTarget()`
-   - Calcule la direction
-   - Applique le mouvement
-   - Gère les collisions
+2. **Move to target** : `moveToTarget()`
+   - Calculate direction
+   - Apply movement
+   - Handle collisions
 
-3. **Mouvement clavier** : `handleKeyboardMovement()`
-   - Interprète WASD
-   - Met à jour la direction
-   - Gère les collisions avec slide
+3. **Keyboard movement** : `handleKeyboardMovement()`
+   - Interpret WASD
+   - Update direction
+   - Handle collisions with slide
 
-4. **Détection de blocage** : `checkStuckAndRecalculate()`
-   - Compteur de frames bloqué
-   - Recalcule le chemin si nécessaire
+4. **Stuck detection** : `checkStuckAndRecalculate()`
+   - Stuck frame counter
+   - Recalculate path if needed
 
 ---
 
 ### `Core.Entity.PathFollower`
 
-Gère le pathfinding et le suivi de chemin.
-
-**Méthodes principales** :
+Manages pathfinding and path following.
 
 ```java
-// Trouve un chemin entre deux tuiles
+// Find path between two tiles
 List<int[]> findPath(int startCol, int startRow, int targetCol, int targetRow)
 
-// Lisse le chemin (supprime les nodes inutiles)
+// Smooth path (remove unnecessary nodes)
 void smoothPath(CollisionDetector collisionDetector)
 
-// Avance d'un node dans le chemin
+// Advance one node in path
 void advancePath()
 
-// Retourne le node actuel du chemin
+// Get current path node
 int[] getCurrentPathTarget()
 ```
 
@@ -230,187 +228,187 @@ int[] getCurrentPathTarget()
 
 ### `Core.Entity.CollisionDetector`
 
-Détecte les collisions entre les entités et le monde.
+Detects collisions between entities and world.
 
 ```java
-// Vérifie si une position est en collision
+// Check if position is colliding
 boolean collidesAt(double topLeftX, double topLeftY)
 
-// Vérifie si le chemin entre deux points est dégagé
+// Check if path between two points is clear
 boolean isPathClear(double x1, double y1, double x2, double y2)
 ```
 
-**Types de collisions** :
-- Murs (tuilesolidée)
-- Tours (bâtiments)
-- Anciens (bases)
+**Collision types**:
+- Walls (solid tiles)
+- Towers (buildings)
+- Ancients (bases)
 
 ---
 
 ### `Core.Match.PathFinder`
 
-Implémentation de l'algorithme A*.
+A* algorithm implementation.
 
 ```java
 public List<int[]> findPath(int startCol, int startRow, int targetCol, int targetRow)
 ```
 
-**Caractéristiques** :
-- Utilise une PriorityQueue pour les nodes à explorer
-- Heuristique : distance de Manhattan
-- 8 directions de mouvement
-- Gestion des obstacles (murs et tours)
+**Characteristics**:
+- Uses PriorityQueue for nodes to explore
+- Heuristic: Manhattan distance
+- 8 movement directions
+- Obstacle handling (walls and towers)
 
 ---
 
 ### `Engine.Render.Camera`
 
-Gère la vue du jeu.
+Manages game view.
 
 ```java
-// Met à jour la position (scrolling)
+// Update position (scrolling)
 void update(int mouseX, int mouseY)
 
 // Zoom
 void zoom(int wheelRotation)
 
-// Conversion coordonnées écran <-> monde
+// Coordinate conversion screen <-> world
 int screenToWorldX(int screenX)
 int screenToWorldY(int screenY)
 ```
 
-**Fonctionnalités** :
-- Scrolling aux bords de l'écran
-- Zoom avec la molette
-- Zoom dynamique (s'adapte à la taille de la carte)
-- Clamping pour ne pas dépasser les limites du monde
+**Features**:
+- Edge scrolling when mouse at edges
+- Zoom with mouse wheel
+- Dynamic zoom (adapts to map size)
+- Clamping to stay within world bounds
 
 ---
 
 ### `Engine.Render.TileRenderer`
 
-Rend les tuiles de la carte.
+Renders map tiles.
 
 ```java
 void draw(Graphics2D g2, Camera camera, int panelWidth, int panelHeight)
 ```
 
-**Optimisations** :
-- **Culling** : Ne dessine que les tuiles visibles
-- Calcul de la plage visible basée sur la caméra
-- Support des animations (eau)
+**Optimizations**:
+- **Culling**: Only draws visible tiles
+- Visible range calculation based on camera
+- Animation support (water)
 
 ---
 
-## Systèmes de Jeu
+## Game Systems
 
-### Système de Mouvement
+### Movement System
 
-Le système de mouvement gère trois modes :
+The movement system handles three modes:
 
-1. **Mode direct** : Le chemin est dégagé, le joueur va tout droit
-2. **Mode pathfinding** : Le chemin est bloqué, on utilise A*
-3. **Mode slide** : Le mouvement direct est bloqué, on slide le long des murs
+1. **Direct mode**: Path is clear, player goes straight
+2. **Pathfinding mode**: Path is blocked, use A*
+3. **Slide mode**: Direct movement blocked, slide along walls
 
-### Système de Collision
+### Collision System
 
-Le système utilise des hitboxes AABB (Axis-Aligned Bounding Box) avec :
-- Un inset de 6 pixels pour plus de fluidité
-- 5 points de vérification (4 coins + centre)
-- Vérification des collisions avec les tuiles et les bâtiments
+The system uses AABB (Axis-Aligned Bounding Box) with:
+- 6-pixel inset for smoother feel
+- 5-point verification (4 corners + center)
+- Tile and building collision checking
 
-### Système de Caméra
+### Camera System
 
-La caméra implémente :
-- **Edge scrolling** : Déplacement quand la souris est aux bords
-- **Zoom** : Molette avec limite min/max
-- **Dynamic zoom** : Zoom minimum basé sur la taille de la carte
+The camera implements:
+- **Edge scrolling**: Movement when mouse at screen edges
+- **Zoom**: Mouse wheel with min/max limits
+- **Dynamic zoom**: Minimum zoom based on map size
 
 ---
 
-## Algorithmes
+## Algorithms
 
 ### A* (A-Star)
 
-L'algorithme de pathfinding utilisé :
+The pathfinding algorithm used:
 
 ```
-1. Initialiser openSet avec le node de départ
-2. Tant que openSet n'est pas vide :
-   a. Node actuel = node avec le plus petit f dans openSet
-   b. Si node actuel == cible : reconstructeur le chemin
-   c. Déplacer node actuel vers closedSet
-   d. Pour chaque voisin :
-      - Si obstacle ou dans closedSet : skip
-      - Calculer g, h, f
-      - Si nouveau chemin meilleur : mettre à jour et ajouter à openSet
-3. Retourner null si pas de chemin
+1. Initialize openSet with start node
+2. While openSet is not empty:
+   a. current = node with smallest f in openSet
+   b. If current == target: reconstruct path
+   c. Move current to closedSet
+   d. For each neighbor:
+      - If obstacle or in closedSet: skip
+      - Calculate g, h, f
+      - If new path better: update and add to openSet
+3. Return null if no path
 ```
 
-**Complexité** : O(E log V) où E = edges, V = vertices
+**Complexity**: O(E log V) where E = edges, V = vertices
 
-### Lissage de Chemin
+### Path Smoothing
 
-Après le calcul du chemin A*, on applique un lissage :
+After A* path calculation, smoothing is applied:
 
 ```java
-// Pour chaque triplet de nodes A, B, C :
-// Si le chemin A->C est dégagé (sans passer par B)
-// alors supprimer B du chemin
+// For each triplet of nodes A, B, C:
+// If path A->C is clear (without passing through B)
+// then delete B from path
 ```
 
 ---
 
-## Guide de Développement
+## Development Guide
 
-### Ajouter une nouvelle unité
+### Add a new unit
 
-1. Créer une classe dans `Core.Moba.Units` qui hérite de `Unite`
-2. Implémenter les méthodes abstraites (stats, comportement)
-3. Ajouter le rendu dans `TowerRenderer` si nécessaire
+1. Create a class in `Core.Moba.Units` extending `Unite`
+2. Implement abstract methods (stats, behavior)
+3. Add rendering in `TowerRenderer` if needed
 
-### Ajouter un nouveau type de tuile
+### Add a new tile type
 
-1. Ajouter l'ID dans le fichier `Map.txt`
-2. Optionally ajouter une image dans `src/Resource/Tiles/`
-3. Modifier `TileLoader` si nécessaire
+1. Add ID in `Map.txt` file
+2. Optionally add image in `src/Resource/Tiles/`
+3. Modify `TileLoader` if needed
 
-### Modifier les statistiques du joueur
+### Modify player stats
 
-Aller dans `Core.Config.java` et modifier :
+Go to `Core.Config.java` and modify:
 - `PLAYER_DEFAULT_SPEED`
 - `PLAYER_DEFAULT_X`
 - `PLAYER_DEFAULT_Y`
 
 ---
 
-## Glossaire
+## Glossary
 
-| Terme | Definition |
+| Term | Definition |
 |--------|------------|
-| AABB | Axis-Aligned Bounding Box - Boite de collision alignée aux axes |
-| Culling | Optimisation qui ne dessine que les éléments visibles |
-| Hitbox | Zone de collision d'une entité |
-| Lane/Voie | Chemin défini sur la carte (Top, Mid, Bot) |
-| Pathfinding | Recherche de chemin |
-| Tier | Niveau d'une tour (1=près de la base, 3=loin) |
-| Ancient | Structure principale de l'équipe (base) |
-| Tick | Unité de temps dans la boucle de jeu |
+| AABB | Axis-Aligned Bounding Box - Axis-aligned collision box |
+| Culling | Optimization that only draws visible elements |
+| Hitbox | Collision area of an entity |
+| Lane/Voie | Defined path on map (Top, Mid, Bot) |
+| Pathfinding | Path search |
+| Tier | Tower level (1=near base, 3=far) |
+| Ancient | Main team structure (base) |
+| Tick | Time unit in game loop |
 
 ---
 
-## API Publique
+## Public API
 
-### Classes principales à utiliser
+### Main classes to use
 
 ```java
-// Créer un joueur
+// Create a player
 Player player = new Player(keyHandler, mouseHandler, tileMap, collisionTable, arena);
 
-// Mettre à jour le joueur (à appeler chaque frame)
+// Update player (call each frame)
 player.update();
 
-// Obtenir la position
+// Get position
 double x = player.getX();
 double y = player.getY();
 Direction dir = player.getDirection();
@@ -424,7 +422,7 @@ boolean pathClear = detector.isPathClear(x1, y1, x2, y2);
 PathFollower follower = new PathFollower(tileMap, collisionTable, arena);
 List<int[]> path = follower.findPath(startCol, startRow, targetCol, targetRow);
 
-// Caméra
+// Camera
 Camera camera = new Camera(width, height);
 camera.update(mouseX, mouseY);
 camera.zoom(wheelRotation);
@@ -433,4 +431,4 @@ int worldX = camera.screenToWorldX(screenX);
 
 ---
 
-Document écrit par Miantsa Fanirina
+Documentation by Miantsa Fanirina

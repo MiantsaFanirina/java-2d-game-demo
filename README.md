@@ -1,186 +1,186 @@
 # Java 2D MOBA Game
 
-Un jeu de démonstration MOBA 2D développé en Java avec Java2D.
+A 2D MOBA demonstration game built with Java and Java2D.
 
-## À propos
+## About
 
-Ce projet est un moteur de jeu MOBA 2D fonctionnel avec un système de déplacement fluide, pathfinding A*, gestion des collisions, et un système de rendu graphique optimisé.
+This project is a fully functional 2D MOBA game engine with smooth movement, A* pathfinding, collision detection, and optimized rendering.
 
-**Développé par** : Miantsa Fanirina  
-**Licence** : MIT  
-**Version** : 1.0.0
+**Developed by**: Miantsa Fanirina  
+**License**: MIT  
+**Version**: 1.0.0
 
-## Fonctionnalités
+## Features
 
-### Système de Mouvement
-- **Déplacement fluide** : Déplacement clavier (WASD) et souris (clic droit)
-- **Pathfinding A\*** : Recherche de chemin intelligente avec lissage de trajectoire
-- **Détection de collision** : Collision avec les murs, tours et bâtiments
-- **Système de slide** : Glissement le long des obstacles quand le mouvement direct est bloqué
-- **Anti-blocage** : Recalcul automatique du chemin quand le joueur est coincé
+### Movement System
+- **Fluid movement**: Keyboard (WASD) and mouse (right-click) movement
+- **A* Pathfinding**: Smart pathfinding with trajectory smoothing
+- **Collision detection**: Collision with walls, towers, and buildings
+- **Slide system**: Sliding along obstacles when direct movement is blocked
+- **Anti-stuck**: Automatic path recalculation when player is stuck
 
-### Caméra
-- **Zoom** : Molette de souris pour zoomer (0.5x à 3x)
-- **Scrolling** : Déplacement automatique aux bords de l'écran
-- **Zoom dynamique** : Adaptation automatique à la taille de la carte
+### Camera
+- **Zoom**: Mouse wheel zoom (0.5x to 3x)
+- **Scrolling**: Auto-scroll at screen edges
+- **Dynamic zoom**: Auto-adapt to map size
 
-### Graphismes
-- **Tilemap** : Carte basée sur des tuiles avec support d'images et couleurs
-- **Animation d'eau** : Effet d'eau animée avec plusieurs frames
-- **Rendu optimisé** : Only dessine les tuiles visibles (culling)
-- **Effets visuels** : Effet de clic au sol
+### Graphics
+- **Tilemap**: Tile-based map with image and color support
+- **Water animation**: Animated water effect with multiple frames
+- **Optimized rendering**: Only draws visible tiles (culling)
+- **Visual effects**: Click ground effect
 
-### Architecture MOBA
-- **Système d'arène** : Deux équipes (Bleu/Rouge)
-- **Lanes** : Top, Mid, Bottom
-- **Tours** : Tours avec niveaux (Tier 1, 2, 3)
-- **Bases** : Anciens (structures principales)
-- **Système extensible** : Unités, sorts, équipements
+### MOBA Architecture
+- **Arena system**: Two teams (Blue/Red)
+- **Lanes**: Top, Mid, Bottom
+- **Towers**: Towers with tiers (Tier 1, 2, 3)
+- **Bases**: Ancients (main structures)
+- **Extensible system**: Units, spells, equipment
 
-## Contrôles
+## Controls
 
-| Entrée | Action |
-|--------|--------|
-| W | Déplacement vers le haut |
-| A | Déplacement vers la gauche |
-| S | Déplacement vers le bas |
-| D | Déplacement vers la droite |
-| Clic droit | Se déplacer vers le point cliqué |
-| Molette haut | Zoom avant |
-| Molette bas | Zoom arrière |
-| Bord de l'écran | Déplacer la caméra |
+| Input | Action |
+|-------|--------|
+| W | Move up |
+| A | Move left |
+| S | Move down |
+| D | Move right |
+| Right click | Move to clicked point |
+| Scroll up | Zoom in |
+| Scroll down | Zoom out |
+| Screen edge | Move camera |
 
 ## Installation
 
-### Prérequis
-- Java 17 ou supérieur
-- Windows (scripts PowerShell)
+### Prerequisites
+- Java 17 or higher
+- Windows (PowerShell scripts)
 
-### Compilation
+### Build
 
 ```powershell
-# Compiler le projet
+# Build the project
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
-### Lancement
+### Run
 
 ```powershell
-# Lancer le jeu
+# Run the game
 powershell -ExecutionPolicy Bypass -File run.ps1
 ```
 
-## Structure du Projet
+## Project Structure
 
 ```
 src/
-├── Main/                    # Point d'entrée du jeu
-│   └── Main.java           # Méthode main
+├── Main/                    # Game entry point
+│   └── Main.java           # main method
 │
-├── Core/                    # Logique métier (indépendant du moteur)
-│   ├── Config.java         # Configuration globale du jeu
+├── Core/                    # Business logic (engine-independent)
+│   ├── Config.java         # Global game configuration
 │   │
-│   ├── Entity/             # Entités et physique
-│   │   ├── Entity.java            # Classe de base
-│   │   ├── Player.java            # Le joueur
-│   │   ├── PlayerMovement.java    # Logique de mouvement
-│   │   ├── PathFollower.java     # Pathfinding et suivi de chemin
-│   │   ├── CollisionDetector.java # Détection des collisions
-│   │   ├── Direction.java        # Énumération des directions
-│   │   ├── MathUtils.java        # Utilitaires mathématiques
-│   │   ├── HitboxUtils.java      # Utilitaires pour les hitboxes
-│   │   └── TileUtils.java        # Utilitaires pour les tuiles
+│   ├── Entity/             # Entities and physics
+│   │   ├── Entity.java            # Base class
+│   │   ├── Player.java            # The player
+│   │   ├── PlayerMovement.java    # Movement logic
+│   │   ├── PathFollower.java     # Pathfinding and path following
+│   │   ├── CollisionDetector.java # Collision detection
+│   │   ├── Direction.java        # Direction enum
+│   │   ├── MathUtils.java        # Math utilities
+│   │   ├── HitboxUtils.java      # Hitbox utilities
+│   │   └── TileUtils.java        # Tile utilities
 │   │
-│   ├── Input/              # Interfaces d'entrée
-│   │   ├── MoveInput.java        # Interface mouvement clavier
-│   │   └── TargetInput.java      # Interface ciblage souris
+│   ├── Input/              # Input interfaces
+│   │   ├── MoveInput.java        # Keyboard movement interface
+│   │   └── TargetInput.java      # Mouse targeting interface
 │   │
-│   ├── Match/              # Systèmes de jeu
-│   │   └── PathFinder.java       # Algorithme A*
+│   ├── Match/              # Game systems
+│   │   └── PathFinder.java       # A* algorithm
 │   │
-│   ├── Moba/               # Logique MOBA
-│   │   ├── Combat/                # Système de combat
-│   │   │   ├── Stats.java              # Statistiques des unités
-│   │   │   └── StatsModifier.java      # Modificateurs de stats
-│   │   ├── Items/                     # Système d'items
-│   │   │   ├── Equipement.java           # Équipement
-│   │   │   └── EquipementTier.java       # Niveaux d'équipment
-│   │   ├── Match/                      # Gestion de partie
-│   │   │   └── Partie.java             # Classe de partie
-│   │   ├── Spells/                     # Système de sorts
-│   │   │   ├── Sort.java                 # Sort
-│   │   │   └── SortContext.java         # Contexte de sort
-│   │   ├── Units/                      # Unités du jeu
-│   │   │   ├── Unite.java               # Classe de base unité
-│   │   │   ├── Tour.java                # Tours
-│   │   │   ├── Ancient.java             # Bases (Anciens)
-│   │   │   ├── Minion.java              # Minions
-│   │   │   ├── Heros.java               # Héros
-│   │   │   ├── Creep.java               # Creeps
-│   │   │   ├── RespawnTimer.java        # Timer de respawn
-│   │   │   └── RecallState.java         # État de rappel
-│   │   ├── World/                       # Éléments du monde
-│   │   │   ├── Arena.java               # Arène principale
-│   │   │   ├── Equipe.java             # Équipe
+│   ├── Moba/               # MOBA logic
+│   │   ├── Combat/                # Combat system
+│   │   │   ├── Stats.java              # Unit stats
+│   │   │   └── StatsModifier.java      # Stat modifiers
+│   │   ├── Items/                     # Item system
+│   │   │   ├── Equipement.java           # Equipment
+│   │   │   └── EquipementTier.java       # Equipment tiers
+│   │   ├── Match/                      # Match management
+│   │   │   └── Partie.java             # Match class
+│   │   ├── Spells/                     # Spell system
+│   │   │   ├── Sort.java                 # Spell
+│   │   │   └── SortContext.java         # Spell context
+│   │   ├── Units/                      # Game units
+│   │   │   ├── Unite.java               # Base unit class
+│   │   │   ├── Tour.java                # Towers
+│   │   │   ├── Ancient.java            # Ancients (bases)
+│   │   │   ├── Minion.java             # Minions
+│   │   │   ├── Heros.java              # Heroes
+│   │   │   ├── Creep.java              # Creeps
+│   │   │   ├── RespawnTimer.java       # Respawn timer
+│   │   │   └── RecallState.java        # Recall state
+│   │   ├── World/                       # World elements
+│   │   │   ├── Arena.java               # Main arena
+│   │   │   ├── Equipe.java             # Team
 │   │   │   ├── Base.java               # Base
-│   │   │   ├── Fontaine.java           # Fontaine
-│   │   │   ├── Vec2.java              # Vecteur 2D
-│   │   │   ├── TeamColor.java         # Couleur d'équipe
-│   │   │   └── Voie.java              # Voies (lanes)
+│   │   │   ├── Fontaine.java           # Fountain
+│   │   │   ├── Vec2.java              # 2D Vector
+│   │   │   ├── TeamColor.java         # Team color
+│   │   │   └── Voie.java              # Lanes
 │   │   └── Ids/                        # Identification
-│   │       └── GameId.java             # IDs uniques
+│   │       └── GameId.java             # Unique IDs
 │   │
-│   └── Tile/                # Gestion de la carte
-│       ├── TileMap.java            # Représentation de la carte
-│       └── CollisionTable.java     # Table de collisions
+│   └── Tile/                # Map management
+│       ├── TileMap.java            # Map representation
+│       └── CollisionTable.java     # Tile collision table
 │
-└── Engine/                   # Moteur de jeu et rendu
-    ├── GamePanel.java            # Panel Swing principal
-    ├── GameEngine.java          # Boucle de jeu
+└── Engine/                   # Game engine and rendering
+    ├── GamePanel.java            # Main Swing panel
+    ├── GameEngine.java          # Game loop
     │
-    ├── Input/                   # Gestion des entrées
-    │   ├── KeyHandler.java      # Gestionnaire clavier
-    │   └── MouseHandler.java    # Gestionnaire souris
+    ├── Input/                   # Input handling
+    │   ├── KeyHandler.java      # Keyboard handler
+    │   └── MouseHandler.java    # Mouse handler
     │
-    ├── Render/                  # Rendu graphique
-    │   ├── Camera.java         # Gestion de la caméra
-    │   ├── TileRenderer.java   # Rendu des tuiles
-    │   ├── PlayerRenderer.java # Rendu du joueur
-    │   ├── PlayerSprites.java   # Chargement sprites joueur
-    │   ├── TowerRenderer.java  # Rendu des tours
-    │   └── ClickEffect.java    # Effet visuel de clic
+    ├── Render/                  # Graphics rendering
+    │   ├── Camera.java         # Camera management
+    │   ├── TileRenderer.java   # Tile rendering
+    │   ├── PlayerRenderer.java # Player rendering
+    │   ├── PlayerSprites.java  # Player sprite loading
+    │   ├── TowerRenderer.java  # Tower rendering
+    │   └── ClickEffect.java    # Click visual effect
     │
-    └── Tile/                   # Chargement des tuiles
-        ├── Tile.java           # Représentation d'une tuile
-        ├── TileLoader.java     # Chargeur de tuiles
-        └── MapParser.java      # Parseur de carte
+    └── Tile/                   # Tile loading
+        ├── Tile.java           # Tile representation
+        ├── TileLoader.java    # Tile loader
+        └── MapParser.java    # Map parser
 ```
 
-## Architecture Technique
+## Technical Architecture
 
-### Pattern Architecture
+### Architecture Pattern
 
-Le projet suit une architecture en couches séparées :
+The project follows a layered architecture:
 
-1. **Core** : Logique métier pure, aucun dépendance au moteur graphique
-2. **Engine** : Moteur de jeu, rendu, gestion des entrées
+1. **Core**: Pure business logic, no graphics engine dependencies
+2. **Engine**: Game engine, rendering, input handling
 
-Cette separation permet de :
-- Tester la logique indépendamment du rendu
-- Réutiliser le code Core dans d'autres projets
-- Faciliter la maintenance
+This separation allows:
+- Testing logic independently from rendering
+- Reusing Core code in other projects
+- Easier maintenance
 
-### Flux de Données
+### Data Flow
 
 ```
 Main.main()
-    └── GamePanel (initialisation)
-            ├── Chargement de la carte (MapParser)
-            ├── Chargement des tuiles (TileLoader)
-            ├── Création de l'arène (Arena)
-            └── Création du joueur (Player)
+    └── GamePanel (initialization)
+            ├── Map loading (MapParser)
+            ├── Tile loading (TileLoader)
+            ├── Arena creation (Arena)
+            └── Player creation (Player)
 
-Boucle de jeu (60 FPS):
+Game Loop (60 FPS):
     GameEngine.gameLoop()
         ├── GameEngine.update()
         │   ├── Camera.update() (scrolling + zoom)
@@ -193,67 +193,67 @@ Boucle de jeu (60 FPS):
         │
         └── GamePanel.renderLoop()
             └── paintComponent()
-                ├── Application transformation caméra
+                ├── Apply camera transform
                 ├── TileRenderer.draw()
                 ├── TowerRenderer.draw()
                 ├── PlayerRenderer.draw()
                 └── ClickEffects.draw()
 ```
 
-### Algorithme A*
+### A* Algorithm
 
-Le pathfinding utilise l'algorithme A* (A-star) avec les caractérisques suivantes :
+Pathfinding uses A* (A-star) algorithm with:
 
-- **Heuristique** : Distance de Manhattan
-- **Mouvement** : 8 directions (incluant les diagonales)
-- **Coûts** : Mouvement diagonal coût √2
-- **Obstacles** : Murs et tours
-- **Optimisation** :early stopping quand la cible est atteinte
+- **Heuristic**: Manhattan distance
+- **Movement**: 8 directions (including diagonals)
+- **Costs**: Diagonal movement cost √2
+- **Obstacles**: Walls and towers
+- **Optimization**: Early stopping when target reached
 
-### Détection de Collision
+### Collision Detection
 
-Le système de collision utilise :
-- **AABB (Axis-Aligned Bounding Box)** : Boites de collision alignées
-- **Multi-point check** : Vérification en 5 points (4 coins + centre)
-- **Hitbox inset** : Marge intérieure pour plus de fluidité
-- **Path clearing** : Vérification du chemin avec inset réduit
+The collision system uses:
+- **AABB (Axis-Aligned Bounding Box)**: Aligned collision boxes
+- **Multi-point check**: 5-point verification (4 corners + center)
+- **Hitbox inset**: Inner margin for smoother feel
+- **Path clearing**: Path verification with reduced inset
 
 ## Configuration
 
-Voir `Core.Config.java` pour tous les paramètres :
+See `Core.Config.java` for all parameters:
 
-| Paramètre | Valeur | Description |
+| Parameter | Value | Description |
 |-----------|--------|-------------|
-| TILE_SIZE | 48 (16×3) | Taille d'une tuile en pixels |
-| MAX_FPS | 60 | Images par seconde |
-| PLAYER_SPEED | 4 | Vitesse de déplacement |
-| CAMERA_SPEED | 20 | Vitesse de scrolling |
-| MIN_ZOOM | 0.5 | Zoom minimum |
-| MAX_ZOOM | 3.0 | Zoom maximum |
+| TILE_SIZE | 48 (16×3) | Tile size in pixels |
+| MAX_FPS | 60 | Frames per second |
+| PLAYER_SPEED | 4 | Movement speed |
+| CAMERA_SPEED | 20 | Scroll speed |
+| MIN_ZOOM | 0.5 | Minimum zoom |
+| MAX_ZOOM | 3.0 | Maximum zoom |
 
-## Carte du Jeu
+## Game Map
 
-La carte est définie dans `src/Data/Map.txt` avec le format :
-- ID de tuile : couleur : nom : [image base64]
+The map is defined in `src/Data/Map.txt` with format:
+- Tile ID : color : name : [base64 image]
 
-Tuiles spéciales pour MOBA :
-- 20 : Tour bleue
-- 21 : Tour rouge
-- 22 : Ancient bleu (base)
-- 23 : Ancient rouge (base)
+Special MOBA tiles:
+- 20 : Blue tower
+- 21 : Red tower
+- 22 : Blue ancient (base)
+- 23 : Red ancient (base)
 
-## Contribution
+## Contributing
 
-Les contributions sont les bienvenues ! Veuillez suivre ces étapes :
+Contributions are welcome! Please follow these steps:
 
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/nom`)
-3. Commit vos changements (`git commit -m 'Ajout de...'`)
-4. Push vers la branche (`git push origin feature/nom`)
-5. Créer une Pull Request
+1. Fork the project
+2. Create a branch (`git checkout -b feature/name`)
+3. Commit your changes (`git commit -m 'Add...'`)
+4. Push to the branch (`git push origin feature/name`)
+5. Create a Pull Request
 
-## Remerciements
+## Acknowledgments
 
-Développé avec passion par Miantsa Fanirina.
+Developed with passion by Miantsa Fanirina.
 
-Merci à tous les contributeurs et testeurs !
+Thanks to all contributors and testers!
