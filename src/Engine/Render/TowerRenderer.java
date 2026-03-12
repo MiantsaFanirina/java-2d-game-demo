@@ -72,15 +72,6 @@ public class TowerRenderer {
         g2.setColor(Color.GREEN);
         double healthPct = (double)tour.stats().hp() / tour.stats().maxHp();
         g2.fillRect(x + 5, y - 10, (int)((structureWidth - 10) * healthPct), 6);
-
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 11));
-        String teamName = tour.equipe().couleur() == TeamColor.BLUE ? "Blue" : "Red";
-        String label = teamName + " " + tour.lane().name() + " T" + tour.tier();
-        
-        FontMetrics fm = g2.getFontMetrics();
-        int labelWidth = fm.stringWidth(label);
-        g2.drawString(label, x + (structureWidth - labelWidth) / 2, y - 15);
     }
 
     public void drawAncient(Graphics2D g2, Ancient ancient, Camera camera) {
