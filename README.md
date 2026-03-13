@@ -590,19 +590,19 @@ Enable debug rendering by calling `DebugRenderer` in game loop to see:
 ## Recent Changes
 
 ### v1.1.0 (Current)
-- ✅ **48 unique heroes** with distinct stats and spells
-- ✅ **Hero sprite differentiation**: Fixed cache key to use characterRow/hairRow/outfitFile
-- ✅ **Zero external dependencies**: Custom JSON parser replaces Gson
-- ✅ **Simplified architecture**: Removed SQLite, direct JSON loading
-- ✅ **Improved sprite caching**: Each hero has unique visual appearance
-- ✅ **Tower projectile system**: Fireballs with proper animation timing
+- [x] **48 unique heroes** with distinct stats and spells
+- [x] **Hero sprite differentiation**: Fixed cache key to use characterRow/hairRow/outfitFile
+- [x] **Zero external dependencies**: Custom JSON parser replaces Gson
+- [x] **Simplified architecture**: Removed SQLite, direct JSON loading
+- [x] **Improved sprite caching**: Each hero has unique visual appearance
+- [x] **Tower projectile system**: Fireballs with proper animation timing
 
 ### v1.0.0
-- ✅ Basic movement system
-- ✅ A* pathfinding
-- ✅ Camera with zoom/scroll
-- ✅ Tile-based rendering with culling
-- ✅ Basic MOBA structures (towers, bases)
+- [x] Basic movement system
+- [x] A* pathfinding
+- [x] Camera with zoom/scroll
+- [x] Tile-based rendering with culling
+- [x] Basic MOBA structures (towers, bases)
 
 ---
 
