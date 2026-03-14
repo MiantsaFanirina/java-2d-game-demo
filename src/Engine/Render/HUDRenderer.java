@@ -21,7 +21,7 @@ public class HUDRenderer {
     private final GoldDisplayRenderer goldDisplay;
     private final ScoreboardRenderer scoreboard;
     private final TargetInfoRenderer targetInfo;
-    private final BuffRenderer buffRenderer;
+    private BuffRenderer buffRenderer;
     private Camera camera;
     private java.util.function.Consumer<Point> moveTargetConsumer;
 
@@ -38,28 +38,28 @@ public class HUDRenderer {
             screenWidth - minimapSize - 5, 5, minimapSize);
         
         // Scoreboard - top left
-        this.scoreboard = new ScoreboardRenderer(arena, player, 0, 0, 160, 60);
+        this.scoreboard = new ScoreboardRenderer(arena, player, 0, 0, 150, 55);
         
         // Gold - below minimap
-        this.goldDisplay = new GoldDisplayRenderer(player, screenWidth - 110, minimapSize + 10, 100, 22);
+        this.goldDisplay = new GoldDisplayRenderer(player, screenWidth - 100, minimapSize + 10, 90, 20);
         
         // Character Panel - bottom left
-        this.characterPanel = new CharacterPanelRenderer(player, 0, screenHeight - 135, 230);
+        this.characterPanel = new CharacterPanelRenderer(player, 0, screenHeight - 130, 220);
         
-        // Ability Bar - bottom center (no margin)
-        int abilityBarWidth = 340;
+        // Ability Bar - bottom center, stuck to bottom
+        int abilityBarWidth = 320;
         int abilityBarX = (screenWidth - abilityBarWidth) / 2;
-        this.abilityBar = new AbilityBarRenderer(player, abilityBarX, screenHeight - 75, abilityBarWidth, 65);
+        this.abilityBar = new AbilityBarRenderer(player, abilityBarX, screenHeight - 70, abilityBarWidth, 60);
         
-        // Item Bar - very bottom (no margin)
-        int itemBarWidth = 200;
-        this.itemBar = new ItemBarRenderer(player, (screenWidth - itemBarWidth) / 2, screenHeight - 20, itemBarWidth, 20);
+        // Item Bar - bottom right corner
+        int itemBarWidth = 180;
+        this.itemBar = new ItemBarRenderer(player, screenWidth - itemBarWidth, screenHeight - 70, itemBarWidth, 50);
         
         // Target Info - left side
-        this.targetInfo = new TargetInfoRenderer(player, 0, screenHeight - 300, 200, 110);
+        this.targetInfo = new TargetInfoRenderer(player, 0, screenHeight - 280, 200, 100);
         
-        // Buff/Debuff Display - above target info
-        this.buffRenderer = new BuffRenderer(player, 0, screenHeight - 340, 200, 30);
+        // Buff/Debuff Display - removed
+        this.buffRenderer = null;
     }
 
     public void setCamera(Camera camera) {
@@ -87,7 +87,6 @@ public class HUDRenderer {
         goldDisplay.render(g2);
         scoreboard.render(g2);
         targetInfo.render(g2);
-        buffRenderer.render(g2);
 
         drawRespawnOverlay(g2);
     }
