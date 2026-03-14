@@ -298,7 +298,7 @@ class CharacterPanelRenderer {
         int barH = 14;
 
         drawBar(g2, barX, barY, barW, barH, player.stats().hp(), player.stats().maxHp(), 
-            new Color(200, 50, 50), new Color(50, 150, 50), "HP");
+            new Color(50, 180, 50), new Color(40, 60, 40), "HP");
         
         barY += 22;
         drawBar(g2, barX, barY, barW, barH, player.stats().mana(), player.stats().maxMana(), 
