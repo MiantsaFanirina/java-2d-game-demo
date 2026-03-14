@@ -46,8 +46,8 @@ public class HUDRenderer {
         // Scoreboard - top left (above minimap to avoid overlap)
         this.scoreboard = new ScoreboardRenderer(arena, player, 15, 15, 180, 70);
         
-        // Character Panel - bottom left
-        this.characterPanel = new CharacterPanelRenderer(player, 15, screenHeight - 170, 260, 150);
+        // Character Panel - bottom left (auto-height)
+        this.characterPanel = new CharacterPanelRenderer(player, 15, screenHeight - 145, 250);
         
         // Ability Bar - bottom center
         int abilityBarWidth = 380;
@@ -221,52 +221,67 @@ class MinimapRenderer {
 
     private Color getTileColor(int tileId) {
         return switch (tileId) {
-            case 0 -> new Color(50, 120, 50);
-            case 1 -> new Color(90, 70, 40);
-            case 2 -> new Color(60, 60, 60);
-            case 3 -> new Color(160, 140, 100);
-            case 4 -> new Color(80, 150, 200);
-            case 5 -> new Color(30, 100, 30);
-            default -> new Color(40, 40, 50);
+            case 0 -> new Color(45, 95, 45);
+            case 1 -> new Color(50, 100, 50);
+            case 2 -> new Color(40, 80, 150);
+            case 3 -> new Color(100, 90, 70);
+            case 4 -> new Color(160, 140, 100);
+            case 5 -> new Color(35, 85, 35);
+            case 6 -> new Color(45, 95, 45);
+            case 7 -> new Color(50, 100, 50);
+            case 8 -> new Color(40, 80, 140);
+            case 9 -> new Color(30, 70, 30);
+            case 10 -> new Color(55, 105, 55);
+            case 11 -> new Color(55, 105, 55);
+            case 12 -> new Color(40, 90, 40);
+            case 13 -> new Color(45, 95, 45);
+            case 14 -> new Color(45, 95, 45);
+            case 18 -> new Color(50, 100, 50);
+            default -> new Color(45, 45, 55);
         };
     }
 }
 
 class CharacterPanelRenderer {
     private final Player player;
-    private final int x, y, width, height;
+    private final int x, y, width;
     private final HeroSpriteCache spriteCache;
+    private int calculatedHeight;
 
-    public CharacterPanelRenderer(Player player, int x, int y, int width, int height) {
+    public CharacterPanelRenderer(Player player, int x, int y, int width) {
         this.player = player;
         this.x = x;
         this.y = y;
         this.width = width;
-        this.height = height;
         this.spriteCache = new HeroSpriteCache();
+        this.calculatedHeight = 135;
+    }
+
+    public int getHeight() {
+        return calculatedHeight;
     }
 
     public void render(Graphics2D g2) {
         g2.setColor(new Color(20, 20, 30, 220));
-        g2.fillRoundRect(x, y, width, height, 10, 10);
+        g2.fillRoundRect(x, y, width, calculatedHeight, 10, 10);
         g2.setColor(new Color(80, 80, 100));
         g2.setStroke(new BasicStroke(2));
-        g2.drawRoundRect(x, y, width, height, 10, 10);
+        g2.drawRoundRect(x, y, width, calculatedHeight, 10, 10);
 
         g2.setColor(new Color(30, 30, 50));
-        g2.fillRect(x + 15, y + 15, 60, 60);
+        g2.fillRect(x + 15, y + 12, 54, 54);
 
         if (player.getHero() != null) {
             var heroSprite = spriteCache.getSprite(player.getHero(), Direction.DOWN, 1);
             if (heroSprite != null) {
-                g2.drawImage(heroSprite, x + 18, y + 18, 54, 54, null);
+                g2.drawImage(heroSprite, x + 18, y + 15, 48, 48, null);
             }
             
             g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Arial", Font.BOLD, 12));
-            g2.drawString(player.getHero().getName(), x + 85, y + 25);
+            g2.setFont(new Font("Arial", Font.BOLD, 11));
+            g2.drawString(player.getHero().getName(), x + 80, y + 22);
             
-            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            g2.setFont(new Font("Arial", Font.PLAIN, 9));
             String category = switch (player.getHero().getCategoryId()) {
                 case 1 -> "Force";
                 case 2 -> "Agilite";
@@ -274,52 +289,52 @@ class CharacterPanelRenderer {
                 default -> "Unknown";
             };
             g2.setColor(new Color(180, 180, 200));
-            g2.drawString("Lv." + player.level() + " " + category, x + 85, y + 40);
+            g2.drawString("Lv." + player.level() + " " + category, x + 80, y + 36);
         }
 
         int barX = x + 15;
-        int barY = y + 85;
+        int barY = y + 76;
         int barW = width - 30;
-        int barH = 18;
+        int barH = 14;
 
         drawBar(g2, barX, barY, barW, barH, player.stats().hp(), player.stats().maxHp(), 
             new Color(200, 50, 50), new Color(180, 40, 40), "HP");
         
-        barY += 25;
+        barY += 18;
         drawBar(g2, barX, barY, barW, barH, player.stats().mana(), player.stats().maxMana(), 
             new Color(50, 100, 200), new Color(40, 80, 180), "MANA");
 
         int statsX = x + 15;
-        int statsY = y + 138;
+        int statsY = y + 118;
         g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 10));
         g2.drawString("ATK: " + player.stats().attack(), statsX, statsY);
-        statsY += 16;
+        statsY += 12;
         g2.drawString("DEF: " + player.stats().defense(), statsX, statsY);
-        statsY += 16;
+        statsY += 12;
         g2.drawString("SPD: " + String.format("%.1f", player.stats().moveSpeed()), statsX, statsY);
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int width, int height, int current, int max, 
                         Color fillColor, Color bgColor, String label) {
         g2.setColor(bgColor);
-        g2.fillRoundRect(x, y, width, height, 4, 4);
+        g2.fillRoundRect(x, y, width, height, 3, 3);
         
         if (max > 0) {
             int fillWidth = (int) ((double) current / max * width);
             g2.setColor(fillColor);
-            g2.fillRoundRect(x, y, fillWidth, height, 4, 4);
+            g2.fillRoundRect(x, y, fillWidth, height, 3, 3);
         }
         
         g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 10));
+        g2.setFont(new Font("Arial", Font.BOLD, 8));
         String text = current + "/" + max;
         FontMetrics fm = g2.getFontMetrics();
-        g2.drawString(text, x + (width - fm.stringWidth(text)) / 2, y + height - 4);
+        g2.drawString(text, x + (width - fm.stringWidth(text)) / 2, y + height - 2);
         
         g2.setColor(new Color(200, 200, 220));
-        g2.setFont(new Font("Arial", Font.PLAIN, 9));
-        g2.drawString(label, x + 2, y - 2);
+        g2.setFont(new Font("Arial", Font.PLAIN, 7));
+        g2.drawString(label, x + 2, y - 1);
     }
 }
 
