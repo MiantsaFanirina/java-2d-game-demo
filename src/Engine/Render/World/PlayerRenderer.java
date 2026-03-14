@@ -1,9 +1,9 @@
-package Engine.Render;
+package Engine.Render.World;
 
 import Core.Config;
 import Core.Entity.Player;
 import Core.Entity.Direction;
-import Engine.Render.HeroSpriteCache;
+import Engine.Render.Cache.HeroSpriteCache;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

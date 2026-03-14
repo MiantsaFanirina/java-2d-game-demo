@@ -1,6 +1,6 @@
 package Engine;
 
-import Engine.Render.HeroSpriteCache;
+import Engine.Render.Cache.HeroSpriteCache;
 import Core.Database.JsonDataProvider;
 import Core.Database.JsonDataProviderFactory;
 import Core.Database.model.Hero;

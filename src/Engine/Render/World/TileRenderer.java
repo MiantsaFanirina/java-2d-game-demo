@@ -1,7 +1,8 @@
-package Engine.Render;
+package Engine.Render.World;
 
 import Core.Config;
 import Core.Tile.TileMap;
+import Engine.Render.Camera;
 import Engine.Tile.Tile;
 
 import java.awt.Color;

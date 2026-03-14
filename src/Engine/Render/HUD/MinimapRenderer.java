@@ -1,10 +1,11 @@
-package Engine.Render;
+package Engine.Render.HUD;
 
 import Core.Config;
 import Core.Entity.Player;
 import Core.Moba.World.Arena;
 import Core.Moba.World.TeamColor;
 import Core.Tile.TileMap;
+import Engine.Render.Camera;
 
 import java.awt.*;
 

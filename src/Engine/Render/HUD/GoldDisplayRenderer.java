@@ -1,4 +1,4 @@
-package Engine.Render;
+package Engine.Render.HUD;
 
 import Core.Entity.Player;
 

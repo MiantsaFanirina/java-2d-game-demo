@@ -1,7 +1,8 @@
-package Engine.Render;
+package Engine.Render.HUD;
 
 import Core.Entity.Direction;
 import Core.Entity.Player;
+import Engine.Render.Cache.HeroSpriteCache;
 
 import java.awt.*;
 

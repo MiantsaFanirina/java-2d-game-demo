@@ -1,4 +1,4 @@
-package Engine.Render;
+package Engine.Render.HUD;
 
 import Core.Entity.Player;
 
@@ -17,17 +17,19 @@ public class AbilityBarRenderer {
     }
 
     public void render(Graphics2D g2) {
+        int padding = 4;
         g2.setColor(new Color(20, 20, 30, 200));
         g2.fillRoundRect(x, y, width, height, 8, 8);
 
-        int slotSize = 55;
+        int slotSize = 46;
         int slotCount = 4;
-        int spacing = (width - slotCount * slotSize) / (slotCount + 1);
-        int startX = x + spacing;
+        int availableWidth = width - (padding * 2);
+        int spacing = (availableWidth - slotCount * slotSize) / (slotCount + 1);
+        int startX = x + padding + spacing;
 
         for (int i = 0; i < slotCount; i++) {
             int slotX = startX + i * (slotSize + spacing);
-            int slotY = y + 8;
+            int slotY = y + padding + (height - padding * 2 - slotSize) / 2;
             
             g2.setColor(new Color(40, 40, 60));
             g2.fillRoundRect(slotX, slotY, slotSize, slotSize, 6, 6);

@@ -1,4 +1,4 @@
-package Engine.Render;
+package Engine.Render.World;
 
 import Core.Config;
 import Core.Entity.Player;
@@ -7,6 +7,9 @@ import Core.Moba.Units.Tour;
 import Core.Moba.Units.TowerProjectile;
 import Core.Moba.World.Arena;
 import Core.Tile.TileMap;
+import Engine.Render.Camera;
+import Engine.Render.ClickEffect;
+import Engine.Render.DebugRenderer;
 import Engine.Tile.Tile;
 
 import java.awt.*;

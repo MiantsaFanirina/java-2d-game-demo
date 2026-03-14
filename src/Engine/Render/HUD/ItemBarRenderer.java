@@ -1,4 +1,4 @@
-package Engine.Render;
+package Engine.Render.HUD;
 
 import Core.Entity.Player;
 
@@ -17,18 +17,19 @@ public class ItemBarRenderer {
     }
 
     public void render(Graphics2D g2) {
+        int padding = 4;
         g2.setColor(new Color(20, 20, 30, 200));
         g2.fillRoundRect(x, y, width, height, 6, 6);
 
         g2.setColor(new Color(180, 180, 200));
         g2.setFont(new Font("Arial", Font.BOLD, 9));
-        g2.drawString("ITEMS", x + 8, y + 12);
+        g2.drawString("ITEMS", x + padding + 4, y + padding + 8);
 
-        int slotSize = 30;
+        int slotSize = 28;
         int slotCount = 6;
         int spacing = 3;
-        int startX = x + 5;
-        int startY = y + 18;
+        int startX = x + padding + 4;
+        int startY = y + padding + 18;
 
         for (int i = 0; i < slotCount; i++) {
             int slotX = startX + i * (slotSize + spacing);

@@ -1,8 +1,9 @@
-package Engine.Render;
+package Engine.Render.HUD;
 
 import Core.Entity.Player;
 import Core.Moba.World.Arena;
 import Core.Tile.TileMap;
+import Engine.Render.Camera;
 
 import java.awt.*;
 
@@ -38,27 +39,26 @@ public class HUDRenderer {
             screenWidth - minimapSize - 5, 5, minimapSize);
         
         // Scoreboard - top left
-        this.scoreboard = new ScoreboardRenderer(arena, player, 0, 0, 150, 55);
+        this.scoreboard = new ScoreboardRenderer(arena, player, 0, 0, 140, 50);
         
         // Gold - below minimap
-        this.goldDisplay = new GoldDisplayRenderer(player, screenWidth - 100, minimapSize + 10, 90, 20);
+        this.goldDisplay = new GoldDisplayRenderer(player, screenWidth - 90, minimapSize + 10, 80, 18);
         
         // Character Panel - bottom left
-        this.characterPanel = new CharacterPanelRenderer(player, 0, screenHeight - 130, 220);
+        this.characterPanel = new CharacterPanelRenderer(player, 0, screenHeight - 125, 200);
         
-        // Ability Bar - bottom center, stuck to bottom
-        int abilityBarWidth = 320;
+        // Ability Bar - bottom center, stuck to bottom edge
+        int abilityBarWidth = 300;
         int abilityBarX = (screenWidth - abilityBarWidth) / 2;
-        this.abilityBar = new AbilityBarRenderer(player, abilityBarX, screenHeight - 70, abilityBarWidth, 60);
+        this.abilityBar = new AbilityBarRenderer(player, abilityBarX, screenHeight - 54, abilityBarWidth, 54);
         
-        // Item Bar - bottom right corner
-        int itemBarWidth = 180;
-        this.itemBar = new ItemBarRenderer(player, screenWidth - itemBarWidth, screenHeight - 70, itemBarWidth, 50);
+        // Item Bar - bottom right, stuck to bottom edge
+        int itemBarWidth = 210;
+        this.itemBar = new ItemBarRenderer(player, screenWidth - itemBarWidth, screenHeight - 55, itemBarWidth, 55);
         
         // Target Info - left side
-        this.targetInfo = new TargetInfoRenderer(player, 0, screenHeight - 280, 200, 100);
+        this.targetInfo = new TargetInfoRenderer(player, 0, screenHeight - 260, 180, 90);
         
-        // Buff/Debuff Display - removed
         this.buffRenderer = null;
     }
 
