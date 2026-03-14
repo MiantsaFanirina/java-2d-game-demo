@@ -254,7 +254,7 @@ class CharacterPanelRenderer {
         this.y = y;
         this.width = width;
         this.spriteCache = new HeroSpriteCache();
-        this.calculatedHeight = 115;
+        this.calculatedHeight = 145;
     }
 
     public int getHeight() {
@@ -269,19 +269,19 @@ class CharacterPanelRenderer {
         g2.drawRoundRect(x, y, width, calculatedHeight, 10, 10);
 
         g2.setColor(new Color(30, 30, 50));
-        g2.fillRect(x + 10, y + 10, 40, 40);
+        g2.fillRect(x + 12, y + 12, 48, 48);
 
         if (player.getHero() != null) {
             var heroSprite = spriteCache.getSprite(player.getHero(), Direction.DOWN, 1);
             if (heroSprite != null) {
-                g2.drawImage(heroSprite, x + 12, y + 12, 36, 36, null);
+                g2.drawImage(heroSprite, x + 14, y + 14, 44, 44, null);
             }
             
             g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Arial", Font.BOLD, 10));
-            g2.drawString(player.getHero().getName(), x + 58, y + 18);
+            g2.setFont(new Font("Arial", Font.BOLD, 12));
+            g2.drawString(player.getHero().getName(), x + 70, y + 20);
             
-            g2.setFont(new Font("Arial", Font.PLAIN, 8));
+            g2.setFont(new Font("Arial", Font.PLAIN, 10));
             String category = switch (player.getHero().getCategoryId()) {
                 case 1 -> "Force";
                 case 2 -> "Agilite";
@@ -289,50 +289,53 @@ class CharacterPanelRenderer {
                 default -> "Unknown";
             };
             g2.setColor(new Color(180, 180, 200));
-            g2.drawString("Lv." + player.level() + " " + category, x + 58, y + 28);
+            g2.drawString("Lv." + player.level() + " " + category, x + 70, y + 34);
         }
 
-        int barX = x + 10;
-        int barY = y + 55;
-        int barW = width - 20;
-        int barH = 10;
+        int barX = x + 12;
+        int barY = y + 68;
+        int barW = width - 24;
+        int barH = 14;
 
         drawBar(g2, barX, barY, barW, barH, player.stats().hp(), player.stats().maxHp(), 
-            new Color(200, 50, 50), new Color(180, 40, 40), "HP");
+            new Color(200, 50, 50), new Color(50, 150, 50), "HP");
         
-        barY += 12;
+        barY += 22;
         drawBar(g2, barX, barY, barW, barH, player.stats().mana(), player.stats().maxMana(), 
             new Color(50, 100, 200), new Color(40, 80, 180), "MANA");
 
-        int statsX = x + 10;
-        int statsY = y + 85;
+        int statsX = x + 12;
+        int statsY = y + 115;
         g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Monospaced", Font.PLAIN, 9));
-        g2.drawString("ATK:" + player.stats().attack(), statsX, statsY);
-        g2.drawString("DEF:" + player.stats().defense(), statsX + 55, statsY);
-        g2.drawString("SPD:" + String.format("%.0f", player.stats().moveSpeed()), statsX + 110, statsY);
+        g2.setFont(new Font("Monospaced", Font.BOLD, 11));
+        String atk = "ATK: " + player.stats().attack();
+        String def = "DEF: " + player.stats().defense();
+        String spd = "SPD: " + String.format("%.0f", player.stats().moveSpeed());
+        g2.drawString(atk, statsX, statsY);
+        g2.drawString(def, statsX + 70, statsY);
+        g2.drawString(spd, statsX + 140, statsY);
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int width, int height, int current, int max, 
                         Color fillColor, Color bgColor, String label) {
         g2.setColor(bgColor);
-        g2.fillRoundRect(x, y, width, height, 2, 2);
+        g2.fillRoundRect(x, y, width, height, 3, 3);
         
         if (max > 0) {
             int fillWidth = (int) ((double) current / max * width);
             g2.setColor(fillColor);
-            g2.fillRoundRect(x, y, fillWidth, height, 2, 2);
+            g2.fillRoundRect(x, y, fillWidth, height, 3, 3);
         }
         
         g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 7));
+        g2.setFont(new Font("Arial", Font.BOLD, 9));
         String text = current + "/" + max;
         FontMetrics fm = g2.getFontMetrics();
-        g2.drawString(text, x + (width - fm.stringWidth(text)) / 2, y + height - 1);
+        g2.drawString(text, x + (width - fm.stringWidth(text)) / 2, y + height - 2);
         
         g2.setColor(new Color(200, 200, 220));
-        g2.setFont(new Font("Arial", Font.PLAIN, 6));
-        g2.drawString(label, x + 1, y - 1);
+        g2.setFont(new Font("Arial", Font.PLAIN, 8));
+        g2.drawString(label, x + 2, y - 2);
     }
 }
 
