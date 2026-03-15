@@ -146,6 +146,8 @@ public interface SelectionListener {
                 setCursor(Cursor.getDefaultCursor());
             }
         };
+        
+        // Add listeners directly to this component
         addMouseListener(mouseAdapter);
         addMouseMotionListener(mouseAdapter);
         addMouseWheelListener(this);
@@ -170,6 +172,11 @@ public interface SelectionListener {
     }
     
     private void updateCursor(int x, int y) {
+        // Ensure layout bounds are calculated
+        if (headerBounds == null || footerBounds == null) {
+            calculateLayoutBounds();
+        }
+        
         int backBtnW = 130;
         int backBtnH = 36;
         int backBtnX = 30;

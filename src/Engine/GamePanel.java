@@ -125,7 +125,7 @@ public class GamePanel extends JPanel {
         
         heroSelectionPanel = new HeroSelectionPanel(new Dimension(Config.getScreenWidth(), Config.getScreenHeight()));
         heroSelectionPanel.setBounds(0, 0, Config.getScreenWidth(), Config.getScreenHeight());
-        heroSelectionPanel.setVisible(true);
+        heroSelectionPanel.setVisible(false);  // Start hidden, main menu is first
         heroSelectionPanel.setSelectionListener(new HeroSelectionPanel.SelectionListener() {
             @Override
             public void onHeroSelected(Hero hero) {
@@ -138,15 +138,20 @@ public class GamePanel extends JPanel {
                 showMainMenu();
             }
         });
-        add(heroSelectionPanel);
+        // Don't add heroSelectionPanel here - we'll add it when needed
+        // add(heroSelectionPanel);
         
         currentState = GameState.MAIN_MENU;
     }
 
     private void showHeroSelection() {
-        remove(mainPanel);
+        if (mainPanel != null && mainPanel.isVisible()) {
+            mainPanel.setVisible(false);
+        }
+        if (getComponentZOrder(heroSelectionPanel) < 0) {
+            add(heroSelectionPanel);
+        }
         heroSelectionPanel.setSize(getWidth(), getHeight());
-        heroSelectionPanel.setVisible(true);
         heroSelectionPanel.setVisible(true);
         currentState = GameState.HERO_SELECTION;
         revalidate();
@@ -159,13 +164,19 @@ public class GamePanel extends JPanel {
             gameEngine.stop();
             gameEngine = null;
         }
-        remove(heroSelectionPanel);
-        mainPanel.setSize(getWidth(), getHeight());
-        mainPanel.setVisible(true);
+        if (heroSelectionPanel != null) {
+            heroSelectionPanel.setVisible(false);
+        }
+        if (mainPanel != null) {
+            mainPanel.setSize(getWidth(), getHeight());
+            mainPanel.setVisible(true);
+        }
         currentState = GameState.MAIN_MENU;
         revalidate();
         repaint();
-        mainPanel.requestFocusInWindow();
+        if (mainPanel != null) {
+            mainPanel.requestFocusInWindow();
+        }
     }
 
     private void returnToMainMenu() {
