@@ -43,6 +43,7 @@ public class PauseMenu extends JPanel {
         setOpaque(false);
         setFocusable(false);
         setLayout(null);
+        setIgnoreRepaint(true);  // Prevent repaint loops
         setVisible(false);
 
         addKeyListener(new KeyAdapter() {
@@ -95,7 +96,7 @@ public class PauseMenu extends JPanel {
 
     public void hide() {
         visible = false;
-        setVisible(false);
+        // Don't call setVisible(false) - causes recursion
         repaint();
     }
 
@@ -189,9 +190,11 @@ public class PauseMenu extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+        if (!visible) {
+            super.paintComponent(g);
+            return;
+        }
         super.paintComponent(g);
-
-        if (!visible) return;
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
