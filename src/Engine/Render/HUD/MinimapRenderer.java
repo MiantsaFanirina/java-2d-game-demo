@@ -115,10 +115,10 @@ public class MinimapRenderer {
 
         drawLanes(g2, scaleX, scaleY);
 
-        for (var ancient : arena.ancients()) {
-            int px = x + (int) (ancient.position().x() * Config.getTileSize() * scaleX);
-            int py = y + (int) (ancient.position().y() * Config.getTileSize() * scaleY);
-            boolean isAlly = ancient.equipe().couleur() == playerTeam;
+        for (var coreBase : arena.coreBases()) {
+            int px = x + (int) (coreBase.position().x() * Config.getTileSize() * scaleX);
+            int py = y + (int) (coreBase.position().y() * Config.getTileSize() * scaleY);
+            boolean isAlly = coreBase.equipe().couleur() == playerTeam;
             g2.setColor(isAlly ? new Color(60, 100, 255) : new Color(200, 60, 60));
             g2.fillRect(px - 6, py - 6, 12, 12);
             g2.setColor(Color.WHITE);

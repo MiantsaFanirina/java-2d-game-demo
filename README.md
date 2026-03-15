@@ -56,7 +56,7 @@ A fully functional 2D MOBA game engine built with pure Java and Java2D Swing. Th
 - **Tower hierarchy**: 3 tiers of towers per lane (near, mid, far from base)
 - **Tower AI**: Automatic targeting of enemies in range, attack cooldown management
 - **Tower projectiles**: Fireballs launched at specific animation frames
-- **Base structures**: Ancients (Nexus) as main team bases
+- **Base structures**: CoreBases (Nexus) as main team bases
 - **Minions**: AI-controlled creep waves that spawn and move along lanes
 - **Fountain zones**: Regeneration areas near base
 
@@ -166,7 +166,7 @@ java-2d-game-demo/
 │   │   │   │   ├── Tour.java             # Tower with animations
 │   │   │   │   ├── TowerAI.java         # AI controlling tower behavior
 │   │   │   │   ├── TowerProjectile.java # Projectile fired by towers
-│   │   │   │   ├── Ancient.java         # Base structure (Nexus)
+│   │   │   │   ├── CoreBase.java         # Base structure (Nexus)
 │   │   │   │   ├── Minion.java          # AI-controlled creep units
 │   │   │   │   ├── Heros.java           # Controllable hero units
 │   │   │   │   ├── Creep.java           # Neutral/forest units
@@ -392,7 +392,7 @@ collidesAt(x, y)
   │     ├─> Bottom-right corner
   │     └─> Center point
   ├─> Check tile collision (solid tiles)
-  ├─> Check building collision (towers, ancients)
+  ├─> Check building collision (towers, core bases)
   └─> Return true if any point collides
 ```
 

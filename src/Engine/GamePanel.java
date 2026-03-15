@@ -4,7 +4,7 @@ import Core.Config;
 import Core.Database.model.Hero;
 import Core.Entity.Player;
 import Core.Moba.Units.Tour;
-import Core.Moba.Units.Ancient;
+import Core.Moba.Units.CoreBase;
 import Core.Moba.World.*;
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
@@ -51,6 +51,7 @@ public class GamePanel extends JPanel {
     private TileRenderer tileRenderer;
     private PlayerRenderer playerRenderer;
     private TowerRenderer towerRenderer;
+    private CoreBaseRenderer coreBaseRenderer;
     private ProjectileRenderer projectileRenderer;
     private HUDRenderer hudRenderer;
     private final Camera camera;
@@ -184,6 +185,8 @@ public class GamePanel extends JPanel {
             player = createPlayerWithHero(tileMap, collisionTable, arena, selectedHero);
             playerRenderer = new PlayerRenderer(player);
             towerRenderer = createTowerRenderer(tiles);
+            coreBaseRenderer = new CoreBaseRenderer();
+            coreBaseRenderer.setTiles(tiles);
             projectileRenderer = new ProjectileRenderer();
             
             // Create HUD renderer
@@ -324,10 +327,10 @@ public class GamePanel extends JPanel {
             entities.add(new RenderableEntity(towerBaseY, RenderableEntity.Type.TOWER, tour));
         }
         
-        // Add ancients
-        for (Ancient ancient : arena.ancients()) {
-            double ancientBaseY = (ancient.position().y() + ancient.height()) * tileSize;
-            entities.add(new RenderableEntity(ancientBaseY, RenderableEntity.Type.ANCIENT, ancient));
+        // Add core bases
+        for (CoreBase coreBase : arena.coreBases()) {
+            double coreBaseBaseY = (coreBase.position().y() + coreBase.height()) * tileSize;
+            entities.add(new RenderableEntity(coreBaseBaseY, RenderableEntity.Type.CORE_BASE, coreBase));
         }
         
         // Add player
@@ -343,14 +346,14 @@ public class GamePanel extends JPanel {
         for (RenderableEntity entity : entities) {
             switch (entity.type) {
                 case TOWER -> towerRenderer.draw(g2, (Tour) entity.entity, camera);
-                case ANCIENT -> towerRenderer.drawAncient(g2, (Ancient) entity.entity, camera);
+                case CORE_BASE -> coreBaseRenderer.draw(g2, (CoreBase) entity.entity, camera);
                 case PLAYER -> playerRenderer.draw(g2, player);
             }
         }
     }
     
     private static class RenderableEntity {
-        enum Type { TOWER, ANCIENT, PLAYER }
+        enum Type { TOWER, CORE_BASE, PLAYER }
         final double renderY;
         final Type type;
         final Object entity;
@@ -368,9 +371,9 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void drawAncients(Graphics2D g2) {
-        for (Ancient ancient : arena.ancients()) {
-            towerRenderer.drawAncient(g2, ancient, camera);
+    private void drawCoreBases(Graphics2D g2) {
+        for (CoreBase coreBase : arena.coreBases()) {
+            coreBaseRenderer.draw(g2, coreBase, camera);
         }
     }
 

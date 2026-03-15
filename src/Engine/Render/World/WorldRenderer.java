@@ -2,7 +2,7 @@ package Engine.Render.World;
 
 import Core.Config;
 import Core.Entity.Player;
-import Core.Moba.Units.Ancient;
+import Core.Moba.Units.CoreBase;
 import Core.Moba.Units.Tour;
 import Core.Moba.Units.TowerProjectile;
 import Core.Moba.World.Arena;
@@ -23,6 +23,7 @@ public class WorldRenderer {
     private final TileRenderer tileRenderer;
     private final PlayerRenderer playerRenderer;
     private final TowerRenderer towerRenderer;
+    private final CoreBaseRenderer coreBaseRenderer;
     private final ProjectileRenderer projectileRenderer;
     private final DebugRenderer debugRenderer;
 
@@ -48,6 +49,7 @@ public class WorldRenderer {
         this.tileRenderer = new TileRenderer(tileMap, tiles);
         this.playerRenderer = new PlayerRenderer(player);
         this.towerRenderer = createTowerRenderer(tiles);
+        this.coreBaseRenderer = createCoreBaseRenderer(tiles);
         this.projectileRenderer = new ProjectileRenderer();
         this.debugRenderer = new DebugRenderer();
     }
@@ -59,6 +61,12 @@ public class WorldRenderer {
 
     private TowerRenderer createTowerRenderer(Tile[] tiles) {
         TowerRenderer renderer = new TowerRenderer();
+        renderer.setTiles(tiles);
+        return renderer;
+    }
+    
+    private CoreBaseRenderer createCoreBaseRenderer(Tile[] tiles) {
+        CoreBaseRenderer renderer = new CoreBaseRenderer();
         renderer.setTiles(tiles);
         return renderer;
     }
@@ -97,10 +105,10 @@ public class WorldRenderer {
             entities.add(new RenderableEntity(towerBaseY, RenderableEntity.Type.TOWER, tower));
         }
 
-        for (Ancient ancient : arena.ancients()) {
-            double ancientPixelY = ancient.position().y() * tileSize;
-            double ancientBaseY = ancientPixelY + (ancient.height() * tileSize);
-            entities.add(new RenderableEntity(ancientBaseY, RenderableEntity.Type.ANCIENT, ancient));
+        for (CoreBase coreBase : arena.coreBases()) {
+            double coreBasePixelY = coreBase.position().y() * tileSize;
+            double coreBaseBaseY = coreBasePixelY + (coreBase.height() * tileSize);
+            entities.add(new RenderableEntity(coreBaseBaseY, RenderableEntity.Type.CORE_BASE, coreBase));
         }
 
         if (player.isAlive()) {
@@ -113,14 +121,14 @@ public class WorldRenderer {
         for (RenderableEntity entity : entities) {
             switch (entity.type) {
                 case TOWER -> towerRenderer.draw(g2, (Tour) entity.entity, camera);
-                case ANCIENT -> towerRenderer.drawAncient(g2, (Ancient) entity.entity, camera);
+                case CORE_BASE -> coreBaseRenderer.draw(g2, (CoreBase) entity.entity, camera);
                 case PLAYER -> playerRenderer.draw(g2, player);
             }
         }
     }
 
     private static class RenderableEntity {
-        enum Type { TOWER, ANCIENT, PLAYER }
+        enum Type { TOWER, CORE_BASE, PLAYER }
         
         final double renderY;
         final Type type;
@@ -150,7 +158,7 @@ public class WorldRenderer {
     }
 
     private void renderDebug(Graphics2D g2) {
-        debugRenderer.render(g2, player, arena.tours(), arena.ancients());
+        debugRenderer.render(g2, player, arena.tours(), arena.coreBases());
     }
 
     public DebugRenderer getDebugRenderer() {

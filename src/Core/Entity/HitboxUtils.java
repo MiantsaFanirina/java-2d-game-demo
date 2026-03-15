@@ -9,6 +9,10 @@ public class HitboxUtils {
     public static final double TOWER_COLLISION_WIDTH_RATIO = 0.35;
     public static final double TOWER_COLLISION_HEIGHT_RATIO = 0.25;
     public static final double TOWER_HITBOX_HEIGHT_RATIO = 0.75;
+    
+    public static final double CORE_BASE_COLLISION_WIDTH_RATIO = 1.0;
+    public static final double CORE_BASE_COLLISION_HEIGHT_RATIO = 1.0;
+    public static final double CORE_BASE_HITBOX_HEIGHT_RATIO = 1.0;
 
     public static class Hitbox {
         private double x, y, width, height;
@@ -159,12 +163,46 @@ public class HitboxUtils {
         );
     }
 
-    public static Hitbox createAncientCollisionBox(double ancientX, double ancientY, int width, int height) {
-        return createTowerCollisionBox(ancientX, ancientY, width, height);
+    public static Hitbox createCoreBaseCollisionBox(double coreBaseX, double coreBaseY, int width, int height) {
+        int tileSize = Config.getTileSize();
+        double pixelX = coreBaseX * tileSize;
+        double pixelY = coreBaseY * tileSize;
+        
+        double spriteWidth = width * tileSize;
+        double spriteHeight = height * tileSize;
+        
+        double collisionWidth = spriteWidth * CORE_BASE_COLLISION_WIDTH_RATIO;
+        double collisionHeight = spriteHeight * CORE_BASE_COLLISION_HEIGHT_RATIO;
+        
+        double offsetX = (spriteWidth - collisionWidth) / 2;
+        
+        return new Hitbox(
+            pixelX + offsetX,
+            pixelY + spriteHeight - collisionHeight,
+            collisionWidth,
+            collisionHeight
+        );
     }
 
-    public static Hitbox createAncientHitbox(double ancientX, double ancientY, int width, int height) {
-        return createTowerHitbox(ancientX, ancientY, width, height);
+    public static Hitbox createCoreBaseHitbox(double coreBaseX, double coreBaseY, int width, int height) {
+        int tileSize = Config.getTileSize();
+        double pixelX = coreBaseX * tileSize;
+        double pixelY = coreBaseY * tileSize;
+        
+        double spriteWidth = width * tileSize;
+        double spriteHeight = height * tileSize;
+        
+        double hitboxWidth = spriteWidth * CORE_BASE_COLLISION_WIDTH_RATIO;
+        double hitboxHeight = spriteHeight * CORE_BASE_HITBOX_HEIGHT_RATIO;
+        
+        double offsetX = (spriteWidth - hitboxWidth) / 2;
+        
+        return new Hitbox(
+            pixelX + offsetX,
+            pixelY + spriteHeight - hitboxHeight,
+            hitboxWidth,
+            hitboxHeight
+        );
     }
 
     private HitboxUtils() {}

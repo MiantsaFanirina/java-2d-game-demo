@@ -2,7 +2,7 @@ package Core.Entity;
 
 import Core.Config;
 import Core.Match.PathFinder;
-import Core.Moba.Units.Ancient;
+import Core.Moba.Units.CoreBase;
 import Core.Moba.Units.Tour;
 import Core.Moba.World.Arena;
 import Core.Tile.CollisionTable;
@@ -12,7 +12,7 @@ import Core.Entity.HitboxUtils;
 import java.util.List;
 
 /**
- * Gère le pathfinding (recherche de chemin) et le suivi du chemin.
+ * Gere le pathfinding (recherche de chemin) et le suivi du chemin.
  */
 public class PathFollower {
 
@@ -113,7 +113,7 @@ public class PathFollower {
             return true;
         }
 
-        return checkTowerCollision(topLeftX, topLeftY, inset);
+        return checkStructureCollision(topLeftX, topLeftY, inset);
     }
 
     private boolean isWallAt(double pixelX, double pixelY) {
@@ -124,7 +124,7 @@ public class PathFollower {
         return collisionTable.hasCollision(tileId);
     }
 
-    private boolean checkTowerCollision(double topLeftX, double topLeftY, double inset) {
+    private boolean checkStructureCollision(double topLeftX, double topLeftY, double inset) {
         int tileSize = Config.getTileSize();
         double left = topLeftX + inset;
         double top = topLeftY + inset;
@@ -141,12 +141,12 @@ public class PathFollower {
             }
         }
 
-        for (Ancient ancient : arena.ancients()) {
-            HitboxUtils.Hitbox ancientCollisionBox = HitboxUtils.createAncientCollisionBox(
-                ancient.position().x(), ancient.position().y(), ancient.width(), ancient.height());
+        for (CoreBase coreBase : arena.coreBases()) {
+            HitboxUtils.Hitbox coreBaseCollisionBox = HitboxUtils.createCoreBaseCollisionBox(
+                coreBase.position().x(), coreBase.position().y(), coreBase.width(), coreBase.height());
 
-            if (right > ancientCollisionBox.getLeft() && left < ancientCollisionBox.getRight()
-                    && bottom > ancientCollisionBox.getTop() && top < ancientCollisionBox.getBottom()) {
+            if (right > coreBaseCollisionBox.getLeft() && left < coreBaseCollisionBox.getRight()
+                    && bottom > coreBaseCollisionBox.getTop() && top < coreBaseCollisionBox.getBottom()) {
                 return true;
             }
         }

@@ -183,7 +183,7 @@ All game unit types.
 | `Tour` | Defensive towers with animation states (idle/attack) |
 | `TowerAI` | AI controlling tower targeting and attack timing |
 | `TowerProjectile` | Projectile fired by towers |
-| `Ancient` | Main bases (Nexus) |
+| `CoreBase` | Main bases (Nexus) |
 | `Minion` | AI-controlled creep units |
 | `Heros` | Controllable heroes |
 | `Creep` | Neutral/forest units |
@@ -424,7 +424,7 @@ collidesAt(x, y)
   ├─> For each point:
   │     ├─> Convert to tile coordinates
   │     ├─> Check tile collision table
-  │     └─> Check building collision (towers, ancients)
+  │     └─> Check building collision (towers, core bases)
   └─> Return true if any point collides
 ```
 
@@ -546,7 +546,7 @@ Result:
 
 **Obstacles handled**:
 - Wall tiles (solid tiles in collision table)
-- Building collision (towers, ancients)
+- Building collision (towers, core bases)
 
 ### Path Smoothing
 
@@ -575,7 +575,7 @@ Input: position (x, y), entity size
 3. For each point:
    - Convert to tile: col = x / TILE_SIZE, row = y / TILE_SIZE
    - Check collision table for tile
-   - Check building collision (towers, ancients)
+   - Check building collision (towers, core bases)
 4. Return collision status
 ```
 
@@ -676,7 +676,7 @@ Example:
 0:#808080:Grass:
 1:#404040:Road:
 20:#0000FF:BlueTower:
-22:#FF0000:RedAncient:
+22:#FF0000:RedCoreBase:
 ```
 
 ---
@@ -689,7 +689,7 @@ Example:
 Unite (abstract)
   ├── Player (controlled by user)
   ├── Tour (tower - defensive structure)
-  ├── Ancient (base - main structure)
+  ├── CoreBase (base - main structure)
   ├── Minion (AI creep - lane unit)
   ├── Heros (player-controlled hero)
   └── Creep (neutral unit)
@@ -708,7 +708,7 @@ Unite (abstract)
 - **Blue Team (Radiant)**: Starts at map position (5, 5)
 - **Red Team (Dire)**: Starts at opposite side
 - **Lanes**: TOP, MID, BOTTOM
-- **Objective**: Destroy enemy Ancient
+- **Objective**: Destroy enemy CoreBase
 
 ---
 
@@ -787,7 +787,7 @@ Enable debug rendering in `GameEngine`:
 | MOBA | Multiplayer Online Battle Arena |
 | Pathfinding | Finding optimal path between two points |
 | Tier | Tower level (1=near base, 3=far) |
-| Ancient | Main team structure (base/Nexus) |
+| CoreBase | Main team structure (base/Nexus) |
 | Tick | Time unit in game loop (1/60 second) |
 | Fountain | Regeneration zone near base |
 

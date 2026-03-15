@@ -4,7 +4,7 @@ import Core.Entity.HitboxUtils;
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
 import Core.Moba.Units.Tour;
-import Core.Moba.Units.Ancient;
+import Core.Moba.Units.CoreBase;
 import Core.Moba.World.Arena;
 import Core.Config;
 import java.util.*;
@@ -181,10 +181,10 @@ public class PathFinder {
             }
         }
         
-        for (Ancient ancient : arena.ancients()) {
-            HitboxUtils.Hitbox ancientCollisionBox = HitboxUtils.createAncientCollisionBox(
-                ancient.position().x(), ancient.position().y(), ancient.width(), ancient.height());
-            if (HitboxUtils.aabbIntersects(tileCollisionBox, ancientCollisionBox)) {
+        for (CoreBase coreBase : arena.coreBases()) {
+            HitboxUtils.Hitbox coreBaseCollisionBox = HitboxUtils.createCoreBaseCollisionBox(
+                coreBase.position().x(), coreBase.position().y(), coreBase.width(), coreBase.height());
+            if (HitboxUtils.aabbIntersects(tileCollisionBox, coreBaseCollisionBox)) {
                 return true;
             }
         }
