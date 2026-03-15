@@ -13,6 +13,7 @@ public class KeyHandler implements KeyListener, MoveInput {
     private boolean leftPressed;
     private boolean rightPressed;
     private Consumer<Void> tabCallback;
+    private Consumer<Void> escapeCallback;
     private final boolean isAzerty;
     
     public KeyHandler() {
@@ -21,6 +22,10 @@ public class KeyHandler implements KeyListener, MoveInput {
     
     public void setTabCallback(Consumer<Void> callback) {
         this.tabCallback = callback;
+    }
+    
+    public void setEscapeCallback(Consumer<Void> callback) {
+        this.escapeCallback = callback;
     }
     
     public boolean isUpPressed() {
@@ -66,6 +71,13 @@ public class KeyHandler implements KeyListener, MoveInput {
             e.consume();
             if (tabCallback != null) {
                 tabCallback.accept(null);
+            }
+        }
+        
+        if (keyCode == KeyEvent.VK_ESCAPE) {
+            e.consume();
+            if (escapeCallback != null) {
+                escapeCallback.accept(null);
             }
         }
     }

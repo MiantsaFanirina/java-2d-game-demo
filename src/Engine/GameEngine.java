@@ -28,6 +28,7 @@ public class GameEngine {
 
     private Thread gameThread;
     private boolean running = false;
+    private boolean paused = false;
 
     public GameEngine(Player player, Camera camera, MouseHandler mouseHandler, Arena arena) {
         this.player = player;
@@ -49,6 +50,18 @@ public class GameEngine {
         gameThread = null;
     }
 
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
     private void gameLoop() {
         long lastTime = System.nanoTime();
 
@@ -58,7 +71,17 @@ public class GameEngine {
 
             if (elapsedTime >= Config.getNanosecondsPerFrame()) {
                 lastTime = currentTime;
-                update();
+                if (!paused) {
+                    update();
+                }
+            }
+            
+            if (paused) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    break;
+                }
             }
         }
     }

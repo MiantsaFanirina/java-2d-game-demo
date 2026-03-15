@@ -18,6 +18,8 @@ import Engine.Render.World.*;
 import Engine.Tile.MapParser;
 import Engine.Tile.Tile;
 import Engine.Tile.TileLoader;
+import Engine.UI.MainPanel;
+import Engine.UI.PauseMenu;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,11 +41,13 @@ import java.awt.geom.AffineTransform;
 public class GamePanel extends JPanel {
     
     private enum GameState {
+        MAIN_MENU,
         HERO_SELECTION,
-        PLAYING
+        PLAYING,
+        PAUSED
     }
     
-    private GameState currentState = GameState.HERO_SELECTION;
+    private GameState currentState = GameState.MAIN_MENU;
     
     private final KeyHandler keyHandler;
     private final MouseHandler mouseHandler;
@@ -59,6 +63,8 @@ public class GamePanel extends JPanel {
     private GameEngine gameEngine;
     
     private HeroSelectionPanel heroSelectionPanel;
+    private MainPanel mainPanel;
+    private PauseMenu pauseMenu;
     private Hero selectedHero;
     
     public GamePanel() {
@@ -76,7 +82,47 @@ public class GamePanel extends JPanel {
         setupInputListeners();
         setupResizeListener();
         
-        // Initialize hero selection panel as a proper Swing component
+        mainPanel = new MainPanel(new Dimension(Config.getScreenWidth(), Config.getScreenHeight()));
+        mainPanel.setBounds(0, 0, Config.getScreenWidth(), Config.getScreenHeight());
+        mainPanel.setVisible(true);
+        mainPanel.setMenuListener(new MainPanel.MainMenuListener() {
+            @Override
+            public void onStartGame() {
+                showHeroSelection();
+            }
+
+            @Override
+            public void onSettings() {
+                System.out.println("Settings clicked");
+            }
+
+            @Override
+            public void onExit() {
+                System.exit(0);
+            }
+        });
+        add(mainPanel);
+        
+        pauseMenu = new PauseMenu();
+        pauseMenu.setBounds(0, 0, Config.getScreenWidth(), Config.getScreenHeight());
+        pauseMenu.setPauseMenuListener(new PauseMenu.PauseMenuListener() {
+            @Override
+            public void onResume() {
+                resumeGame();
+            }
+
+            @Override
+            public void onReturnToMain() {
+                returnToMainMenu();
+            }
+
+            @Override
+            public void onSettings() {
+                System.out.println("Settings from pause menu");
+            }
+        });
+        add(pauseMenu);
+        
         heroSelectionPanel = new HeroSelectionPanel(new Dimension(Config.getScreenWidth(), Config.getScreenHeight()));
         heroSelectionPanel.setBounds(0, 0, Config.getScreenWidth(), Config.getScreenHeight());
         heroSelectionPanel.setVisible(true);
@@ -86,8 +132,58 @@ public class GamePanel extends JPanel {
         });
         add(heroSelectionPanel);
         
-        // Initially hide game components
+        currentState = GameState.MAIN_MENU;
+    }
+
+    private void showHeroSelection() {
+        remove(mainPanel);
+        heroSelectionPanel.setSize(getWidth(), getHeight());
+        heroSelectionPanel.setVisible(true);
         currentState = GameState.HERO_SELECTION;
+        revalidate();
+        repaint();
+        heroSelectionPanel.requestFocusInWindow();
+    }
+
+    private void showMainMenu() {
+        if (gameEngine != null) {
+            gameEngine.stop();
+            gameEngine = null;
+        }
+        remove(heroSelectionPanel);
+        mainPanel.setSize(getWidth(), getHeight());
+        mainPanel.setVisible(true);
+        currentState = GameState.MAIN_MENU;
+        revalidate();
+        repaint();
+        mainPanel.requestFocusInWindow();
+    }
+
+    private void returnToMainMenu() {
+        showMainMenu();
+    }
+
+    private void pauseGame() {
+        if (currentState == GameState.PLAYING) {
+            currentState = GameState.PAUSED;
+            if (gameEngine != null) {
+                gameEngine.pause();
+            }
+            pauseMenu.setSize(getWidth(), getHeight());
+            pauseMenu.show();
+            repaint();
+        }
+    }
+
+    private void resumeGame() {
+        if (currentState == GameState.PAUSED) {
+            currentState = GameState.PLAYING;
+            if (gameEngine != null) {
+                gameEngine.resume();
+            }
+            pauseMenu.hide();
+            repaint();
+        }
     }
 
     private TileMap loadTileMap() {
@@ -201,6 +297,14 @@ public class GamePanel extends JPanel {
                 mouseHandler.setTarget(target.x, target.y);
             });
             
+            hudRenderer.setPauseCallback(v -> {
+                if (currentState == GameState.PLAYING) {
+                    pauseGame();
+                } else if (currentState == GameState.PAUSED) {
+                    resumeGame();
+                }
+            });
+            
             mouseHandler.setLeftClickCallback(point -> {
                 if (hudRenderer.handleMouseClick(point.x, point.y)) {
                     // Left click on minimap sets camera
@@ -220,6 +324,15 @@ public class GamePanel extends JPanel {
             // Tab key to center camera on player
             keyHandler.setTabCallback(v -> {
                 gameEngine.centerCameraOnPlayer();
+            });
+            
+            // ESC key to toggle pause
+            keyHandler.setEscapeCallback(v -> {
+                if (currentState == GameState.PLAYING) {
+                    pauseGame();
+                } else if (currentState == GameState.PAUSED) {
+                    resumeGame();
+                }
             });
             
             // Remove hero selection panel and change state
@@ -253,10 +366,22 @@ public class GamePanel extends JPanel {
             hudRenderer.setScreenSize(width, height);
         }
         
+        // Update main panel size if visible
+        if (mainPanel != null && currentState == GameState.MAIN_MENU) {
+            mainPanel.setSize(width, height);
+            mainPanel.revalidate();
+        }
+        
         // Update hero selection panel size if it's still visible
         if (currentState == GameState.HERO_SELECTION) {
             heroSelectionPanel.setSize(width, height);
             heroSelectionPanel.revalidate();
+        }
+        
+        // Update pause menu size if visible
+        if (pauseMenu != null && (currentState == GameState.PAUSED || pauseMenu.isPauseMenuVisible())) {
+            pauseMenu.setSize(width, height);
+            pauseMenu.revalidate();
         }
         
         repaint();
@@ -284,13 +409,12 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        if (currentState == GameState.PLAYING) {
+        if (currentState == GameState.PLAYING || currentState == GameState.PAUSED) {
             Graphics2D g2 = (Graphics2D) g;
             drawGameWorld(g2);
             drawUI(g2);
             g2.dispose();
         }
-        // Hero selection panel handles its own painting when visible
     }
 
     private void drawGameWorld(Graphics2D g2) {
