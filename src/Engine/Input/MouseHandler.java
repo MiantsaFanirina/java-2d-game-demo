@@ -1,12 +1,21 @@
 package Engine.Input;
 
-import Core.Input.TargetInput;
 import Engine.Render.Camera;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+/**
+ * Gère les entrées de la souris.
+ * 
+ * Concepts clés pour un débutant:
+ * - MouseAdapter est une classe quiimplémente MouseListener (gestion des clics)
+ * - TargetInput est une interface pour définir une cible/destination
+ * - Les coordonnées écran doivent être converties en coordonnées du monde avec la caméra
+ * - BUTTON1 = clic gauche (destination de mouvement), BUTTON3 = clic droit (actions)
+ * - Les callbacks permettent de définir ce qui se passe lors des clics sans coder les événements partout
+ */
 public class MouseHandler extends MouseAdapter implements TargetInput {
     
     private int targetX = -1;

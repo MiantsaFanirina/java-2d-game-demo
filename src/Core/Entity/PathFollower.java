@@ -13,6 +13,16 @@ import java.util.List;
 
 /**
  * Gere le pathfinding (recherche de chemin) et le suivi du chemin.
+ * 
+ * Concepts clés pour un débutant:
+ * - Pathfinding = trouver le chemin le plus court entre deux points
+ * - PathFinder utilise un algorithme (A* ou BFS) pour trouver le chemin
+ * - currentPath = liste de coordonnées [col, row] représentant le chemin
+ * - currentPathIndex = où on en est dans le chemin
+ * - smoothPath() = "lisser" le chemin en supprimant les virages inutiles
+ * 
+ * Exemple: Si le chemin est [(5,5), (5,6), (5,7), (6,7), (7,7)]
+ * smoothPath peut supprimer (5,6), (5,7), (6,7) si on peut aller direct de (5,5) à (7,7)
  */
 public class PathFollower {
 

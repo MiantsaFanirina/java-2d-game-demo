@@ -2,8 +2,8 @@ package Core.Entity;
 
 import Core.Config;
 import Core.Database.model.Hero;
-import Core.Input.MoveInput;
-import Core.Input.TargetInput;
+import Engine.Input.MoveInput;
+import Engine.Input.TargetInput;
 import Core.Moba.Combat.Stats;
 import Core.Moba.Units.Tour;
 import Core.Moba.World.Arena;
@@ -13,38 +13,64 @@ import Core.Moba.World.Vec2;
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
 
+/**
+ * Représente le joueur contrôlé par l'utilisateur.
+ * Cette classe étend Entity (la classe de base pour tous les objets du jeu).
+ * 
+ * Concepts clés:
+ * - MoveInput: gère les touches WASZ pour le mouvement
+ * - TargetInput: gère les clics de souris pour définir une destination
+ * - CollisionDetector: détecte les collisions avec les murs/tuiles bloquantes
+ * - PathFollower: trouve un chemin vers la destination en contournant les obstacles
+ * - Stats: les statistiques du joueur (PV, mana, attaque, défense, etc.)
+ * - TileMap: la carte du monde représenté par des tuiles
+ * - Arena: l'arène de jeu contenant toutes les unités (tours, ennemis, etc.)
+ * - Equipe: l'équipe du joueur (BLEU ou ROUGE)
+ */
 public class Player extends Entity {
     
-    private final MoveInput moveInput;
-    private final TargetInput targetInput;
-    private final CollisionDetector collisionDetector;
-    private final PathFollower pathFollower;
-    private final PlayerMovement movement;
-    private final Stats stats;
-    private final TileMap tileMap;
-    private Arena arena;
-    private Equipe team;
+    private final MoveInput moveInput;       // Entrée clavier pour le mouvement (WASD)
+    private final TargetInput targetInput;   // Entrée souris pour la cible/destination
+    private final CollisionDetector collisionDetector;  // Détection de collision avec les murs
+    private final PathFollower pathFollower; // Trouver un chemin vers la destination
+    private final PlayerMovement movement;   // Logique de mouvement du joueur
+    private final Stats stats;              // Statistiques (PV, mana, attaque, défense)
+    private final TileMap tileMap;           // La carte du jeu (tuiles)
+    private Arena arena;                     // L'arène contenant toutes les unités
+    private Equipe team;                     // L'équipe du joueur (BLEU=Radiant, ROUGE=Dire)
     
-    private int level = 1;
+    private int level = 1;                   // Niveau du joueur (augmente avec l'expérience)
     
-    private final Hero hero;
-    private final int characterRow;
-    private final int hairRow;
-    private final String outfitFile;
-    private final Integer suitRow;
+    private final Hero hero;                 // Le héros sélectionné par le joueur
+    private final int characterRow;          // Sprite du personnage pour l'animation
+    private final int hairRow;               // Sprite des cheveux
+    private final String outfitFile;         // Fichier d'apparence du vêtements
+    private final Integer suitRow;           // Sprite de la tenue
     
-    private boolean isAlive = true;
-    private long respawnEndTimeNanos = 0;
-    private boolean justRespawned = false;
+    private boolean isAlive = true;          // Le joueur est-il en vie?
+    private long respawnEndTimeNanos = 0;    // Temps de renaissance en nanosecondes
+    private boolean justRespawned = true;   // Vient derenaître? (pour centrer la caméra)
     
     private long lastWoodDamageTimeNanos = 0;
-    private static final long WOOD_DAMAGE_INTERVAL_NANOS = 200_000_000;
+    private static final long WOOD_DAMAGE_INTERVAL_NANOS = 200_000_000; // 0.2 seconde
     
+    /**
+     * Constructeur sans héros (pour les tests)
+     */
     public Player(MoveInput moveInput, TargetInput targetInput, 
                   TileMap tileMap, CollisionTable collisionTable, Arena arena) {
         this(moveInput, targetInput, tileMap, collisionTable, arena, null);
     }
     
+    /**
+     * Constructeur principal avec héros
+     * @param moveInput Gestion des touches de mouvement
+     * @param targetInput Gestion des clics souris pour les destinations
+     * @param tileMap La carte du monde
+     * @param collisionTable Table de collision (quelles tuiles sont bloquantes)
+     * @param arena L'arène de jeu
+     * @param hero Le héros sélectionné (null si pas encore sélectionné)
+     */
     public Player(MoveInput moveInput, TargetInput targetInput, 
                   TileMap tileMap, CollisionTable collisionTable, Arena arena, Hero hero) {
         this.moveInput = moveInput;

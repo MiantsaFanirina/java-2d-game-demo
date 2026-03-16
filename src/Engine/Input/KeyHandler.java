@@ -1,11 +1,19 @@
 package Engine.Input;
 
-import Core.Input.MoveInput;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.function.Consumer;
 
+/**
+ * Gère les entrées clavier du joueur.
+ * 
+ * Concepts clés pour un débutant:
+ * - KeyListener est une interface Java pour capter les événements clavier
+ * - MoveInput est une interface qui définit comment le mouvement est géré
+ * - VK = Virtual Key, les codes des touches (VK_W = W, VK_S = S, etc.)
+ * - Le jeu détecte si le clavier est AZERTY ou QWERTY pour adapter les touches
+ * - tabCallback et escapeCallback permettent d'assigner des actions à TAB et ÉCHAP
+ */
 public class KeyHandler implements KeyListener, MoveInput {
     
     private boolean upPressed;

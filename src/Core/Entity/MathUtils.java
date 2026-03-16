@@ -1,7 +1,21 @@
 package Core.Entity;
 
 /**
- * Utilitaires mathématiques.
+ * Utilitaires mathématiques - fonctions utilitaires pour les calculs géométriques.
+ * 
+ * Concepts clés pour un débutants:
+ * - distance(): calcule la distance euclidienne entre deux points (Pythagore)
+ * - distanceSquared(): distance au carré (plus rapide, utile pour des comparaisons)
+ * - normalize(): converts a value to -1, 0, or 1
+ * - normalizeVector(): rend un vecteur de longueur 1 (garde juste la direction)
+ * - lerp(): interpolation linéaire - trouve une valeur entre deux autres (pour les animations)
+ * - clamp(): limite une valeur entre un min et un max
+ * 
+ * Exemples:
+ * - clamp(5, 0, 10) = 5 (dans les limites)
+ * - clamp(-5, 0, 10) = 0 (trop petit, ramené à 0)
+ * - clamp(15, 0, 10) = 10 (trop grand, ramené à 10)
+ * - lerp(0, 10, 0.5) = 5 (à mi-chemin)
  */
 public class MathUtils {
 
@@ -15,10 +29,6 @@ public class MathUtils {
         double dx = x2 - x1;
         double dy = y2 - y1;
         return dx * dx + dy * dy;
-    }
-
-    public static int pixelToTileCoord(double pixel, int tileSize) {
-        return (int) Math.floor(pixel / tileSize);
     }
 
     public static double normalize(double value) {

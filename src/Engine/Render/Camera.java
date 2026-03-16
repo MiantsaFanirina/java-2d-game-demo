@@ -3,6 +3,18 @@ package Engine.Render;
 import Core.Entity.MathUtils;
 import Core.Config;
 
+/**
+ * Caméra du jeu - gère ce que le joueur voit à l'écran.
+ * 
+ * Concepts clés pour un débutant:
+ * - La caméra a une position (x, y) dans le monde du jeu
+ * - Le "viewport" est la partie visible de l'écran
+ * - Le "zoom" permet de zoomer/dézoomer avec la molette de la souris
+ * - Le "world" est le monde complet du jeu (plus grand que l'écran)
+ * - screenToWorldX/Y: convertit les coordonnées écran en coordonnées du monde
+ * - Edge scrolling: déplacer la caméra en plaçant la souris au bord de l'écran
+ * - Follow player: la caméra suit automatiquement le joueur quand il bouge avec WASD
+ */
 public class Camera {
     
     private float x;

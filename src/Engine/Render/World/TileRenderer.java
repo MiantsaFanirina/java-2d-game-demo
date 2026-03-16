@@ -9,6 +9,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+/**
+ * Responsable du dessin des tuiles (le terrain) à l'écran.
+ * 
+ * Concepts clés pour un débutant:
+ * - Graphics2D: l'objet qui permet de dessiner sur le panneau
+ * - calculateVisibleRange():优化 optimisée - dessine seulement les tuiles visibles à l'écran
+ * - Ne pas dessiner les tuiles hors écran améliore beaucoup les performances
+ * - getAnimatedWaterTile(): anime l'eau en changeant d'image régulièrement
+ * - tileSize = taille en pixels d'une tuile (défini dans Config)
+ * 
+ * Le processus de dessin:
+ * 1. Calculer quelles tuiles sont visibles avec la caméra
+ * 2. Pour chaque tuile visible, dessiner son image ou sa couleur
+ * 3. Utiliser le zoom de la caméra pour l'agrandissement/réduction
+ */
 public class TileRenderer {
 
     private final TileMap tileMap;

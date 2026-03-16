@@ -2,6 +2,15 @@ package Core.Entity;
 
 /**
  * Classe de base pour toutes les entités du jeu.
+ * 
+ * Concepts clés pour un débutant:
+ * - Une "entité" est tout objet qui a une position et peut être dessiné
+ * - Cette classe définit les propriétés de base: position (x, y), vitesse, direction
+ * - spriteCounter et spriteNum gèrent l'animation des sprites (images)
+ * - updateSpriteAnimation() fait tourner les frames d'animation pour créer un mouvement
+ * 
+ * Héritage: Player, Tour (tour), Minion, Heros, etc. étendent tous cette classe
+ * Cela permet de traiter tous ces objets de la même manière dans le code!
  */
 public class Entity {
     

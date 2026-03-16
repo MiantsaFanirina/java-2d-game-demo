@@ -3,6 +3,20 @@ package Core.Database.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Représente un héros jouable dans le jeu.
+ * 
+ * Concepts clés pour un débutants:
+ * - Cette classe vient de la base de données JSON (Core/Database/)
+ * - Chaque héros a des statistiques différentes (PV, attaque, défense, vitesse)
+ * - characterRow = quelle ligne du sprite sheet utiliser pour le corps
+ * - hairRow = quelle ligne du sprite sheet utiliser pour les cheveux
+ * - outfitFile = fichier PNG des vêtements
+ * - suitRow = quelle ligne du sprite sheet pour l'armure (peut être null)
+ * - spells = liste des sorts du héros
+ * 
+ * Les données sont chargées depuis JSON et transformées en objets Java
+ */
 public class Hero {
     private int id;
     private String name;

@@ -6,13 +6,25 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+/**
+ * Point d'entrée principal du jeu.
+ * 
+ * Comment ce code fonctionne pour un débutant:
+ * - Ce est le PREMIER code qui s'exécute quand on lance le jeu
+ * - Il crée une fenêtre JFrame (le conteneur principal)
+ * - Il ajoute un GamePanel (le panneau de jeu) à la fenêtre
+ * - Il gère le plein écran avec la touche F11
+ */
 public class Main {
     
-    private static JFrame window;
-    private static GamePanel gamePanel;
+    private static JFrame window;        // La fenêtre principale du jeu
+    private static GamePanel gamePanel;  // Le panneau où le jeu est dessiné
     private static boolean isFullscreen = false;
-    private static GraphicsDevice gd;
+    private static GraphicsDevice gd;    // Pour gérer le plein écran
     
+    /**
+     * Méthode principale - point de départ du programme Java
+     */
     public static void main(String[] args) {
         gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         

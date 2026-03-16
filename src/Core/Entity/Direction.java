@@ -1,7 +1,14 @@
 package Core.Entity;
 
 /**
- * Directions cardinales du jeu.
+ * Directions cardinales du jeu - utilisée pour l'orientation des sprites.
+ * 
+ * Concepts clés pour un débutant:
+ * - enum = énumération: une liste fixe de valeurs (comme un menu déroulant)
+ * - Chaque direction correspond à une animation de sprite différente
+ * - fromDelta(dx, dy) convertit un déplacement en direction
+ *   Exemple: dx=10, dy=0 → RIGHT (on bouge plus à droite qu'en haut/bas)
+ * - fromString permet de convertir un texte en direction (pour charger depuis un fichier)
  */
 public enum Direction {
     UP("up"),

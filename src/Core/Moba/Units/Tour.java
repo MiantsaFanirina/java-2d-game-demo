@@ -9,6 +9,23 @@ import Core.Moba.World.Voie;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Les tours (Towers) dans un jeu MOBA - elles défendent leur voie et attaquent les ennemis.
+ * 
+ * Concepts clés pour un débutants:
+ * - Étend Unite (Unité) - la classe de base pour toutes les unités du jeu
+ * - tier = niveau de la tour (1 = près de la base, 2 = milieu, 3 = extérieure)
+ * - lane = voie où se trouve la tour (TOP, MID, BOT)
+ * - portee = portée d'attaque en pixels
+ * - TowerAI = l'intelligence artificielle qui décide quand attaquer
+ * - projectiles = liste des projectiles actuellement en vol
+ * - AnimationState: IDLE (frame 6-13) ou ATTACK (frame 14-20)
+ * 
+ * Comportement:
+ * - Les tours attaquent automatiquement les ennemis dans leur portée
+ * - Elles ont un cooldown entre les attaques
+ * - Quand un ennemi s'approche, l'animation d'attaque se déclenche
+ */
 public class Tour extends Unite {
     private int tier;
     private Voie lane;

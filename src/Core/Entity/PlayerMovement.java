@@ -1,8 +1,8 @@
 package Core.Entity;
 
 import Core.Config;
-import Core.Input.MoveInput;
-import Core.Input.TargetInput;
+import Engine.Input.MoveInput;
+import Engine.Input.TargetInput;
 import Core.Entity.MathUtils;
 
 import java.util.List;

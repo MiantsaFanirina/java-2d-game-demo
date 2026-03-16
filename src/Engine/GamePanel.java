@@ -36,9 +36,22 @@ import java.util.List;
 /**
  * Panel principal du jeu.
  * Gère l'affichage (rendering) et initialise tous les composants.
+ * 
+ * Concepts importants pour un débutant:
+ * - JPanel est un conteneur Swing pour dessiner des graphiques
+ * - paintComponent() est la méthode principale qui dessine le jeu à chaque frame (60 fois par seconde)
+ * - GameState gère les différents écrans: menu principal, sélection de héros, jeu en cours, pause
+ * - Les "renderers" (TileRenderer, PlayerRenderer, etc.) sont responsables de dessiner différents éléments
  */
 public class GamePanel extends JPanel {
     
+    /**
+     * Estados du jeu - permet de savoir dans quel écran on se trouve
+     * MAIN_MENU = écran de démarrage
+     * HERO_SELECTION = écran de choix de personnage
+     * PLAYING = le jeu est en cours
+     * PAUSED = jeu en pause (appuyer sur ÉCHAP)
+     */
     private enum GameState {
         MAIN_MENU,
         HERO_SELECTION,

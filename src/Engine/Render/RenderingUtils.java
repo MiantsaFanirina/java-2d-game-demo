@@ -1,7 +1,5 @@
 package Engine.Render;
 
-import Core.Config;
-
 import java.awt.*;
 
 public class RenderingUtils {
@@ -35,14 +33,6 @@ public class RenderingUtils {
     public static void enableAntialiasing(Graphics2D g2) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    }
-
-    public static int getTileCenterX(int tileX) {
-        return tileX * Config.getTileSize() + Config.getTileSize() / 2;
-    }
-
-    public static int getTileCenterY(int tileY) {
-        return tileY * Config.getTileSize() + Config.getTileSize() / 2;
     }
 
     private RenderingUtils() {}

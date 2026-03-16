@@ -9,6 +9,24 @@ import Core.Moba.World.Arena;
 import Core.Config;
 import java.util.*;
 
+/**
+ * Implémentation de l'algorithme A* (A-star) pour la recherche de chemin.
+ * 
+ * Concepts clés pour un débutant:
+ * - A* est un algorithme populaire pour trouver le chemin le plus court
+ * - Il utilise deux scores: G (coût depuis le départ) et H (estimation jusqu'à l'arrivée)
+ * - F = G + H, on explore toujours le noeud avec le plus petit F
+ * - PriorityQueue = file d'attente prioritaire (toujours sortir le noeud avec le plus petit F)
+ * - openList = noeuds à explorer, closedList = noeuds déjà explorés
+ * - parent = permet de retracer le chemin une fois la destination atteinte
+ * 
+ * Voici comment A* marche:
+ * 1. Commencer par le noeud de départ
+ * 2. À chaque étape, prendre le noeud avec le plus petit F
+ * 3. Explorer ses voisins (haut, bas, gauche, droite, et diagonales)
+ * 4. Si on atteint la cible, remonter via les parents pour construire le chemin
+ * 5. Si plus de noeuds à explorer, pas de chemin possible
+ */
 public class PathFinder {
     
     private static class Node implements Comparable<Node> {

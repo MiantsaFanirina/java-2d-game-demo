@@ -1,5 +1,23 @@
 package Core.Moba.Combat;
 
+/**
+ * Représente les statistiques d'une unité (points de vie, mana, attaque, etc.).
+ * 
+ * Concepts clés pour un débutants:
+ * - final = classe non modifiable (pas de sous-classes)
+ * - maxHp = PV maximum, hp = PV actuels
+ * - maxMana = mana maximum, mana = mana actuel
+ * - attack = dégats d'attaque
+ * - defense = réduction de dégats (pas implémenté actuellement)
+ * - moveSpeed = vitesse de mouvement
+ * 
+ * Méthodes importantes:
+ * - heal() = restaurer des PV (ne peut pas dépasser maxHp)
+ * - restoreMana() = restaurer du mana
+ * - takeDamage() = subir des dégats
+ * - spendMana() = utiliser du mana (retourne false si pas assez)
+ * - isDead() = retourne true si hp <= 0
+ */
 public final class Stats {
     private int maxHp;
     private int hp;

@@ -17,6 +17,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Moteur principal du jeu - gère la boucle de jeu (game loop).
+ * 
+ * Concepts clés pour un débutant:
+ * - Une "game loop" est une boucle infinie qui met à jour le jeu ~60 fois par seconde
+ * - update() met à jour tous les éléments du jeu (joueur, tours, caméra, etc.)
+ * - Le panneau de dessin (GamePanel) dessine le jeu indépendamment (séparation rendu/logique)
+ * - Thread: le jeu tourne sur un fil d'exécution séparé pour ne pas bloquer l'interface
+ */
 public class GameEngine {
 
     private final Player player;

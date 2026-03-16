@@ -2,6 +2,23 @@ package Core.Entity;
 
 import Core.Config;
 
+/**
+ * Utilitaires pour la gestion des hitboxes (boîtes de collision).
+ * 
+ * Concepts clés pour un débutants:
+ * - Hitbox = zone rectangulaire qui définit où un objet "existe" physiquement
+ * - AABB = Axis-Aligned Bounding Box - rectangle qui ne peut pas tourner
+ * - COLLISION_BOX_BOTTOM_RATIO = la hitbox de collision est plus petite (seulement 15% de la hauteur en bas)
+ * - HITBOX_INSET = marge de 2 pixels pour éviter les problèmes de collision
+ * - createEntityHitbox() = hitbox pour le joueur (plus petite que la tuile)
+ * - createEntityCollisionBox() = zone encore plus petite pour les collisions (15% du bas)
+ * - aabbIntersects() = vérifie si deux hitboxes se chevauchent (collision!)
+ * 
+ * Pourquoi des hitboxes différentes?
+ * - Hitbox visuelle: pour les clics de souris (plus grande)
+ * - Hitbox de collision: plus petite pour éviter de coincer le joueur dans les murs
+ * - Les tours ont des hitboxes différentes car elles sont plus grandes
+ */
 public class HitboxUtils {
 
     public static final double COLLISION_BOX_BOTTOM_RATIO = 0.15;

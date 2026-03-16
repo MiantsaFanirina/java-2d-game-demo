@@ -3,6 +3,20 @@ package Core;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+/**
+ * Configuration globale du jeu - toutes les constantes et paramètres.
+ * 
+ * Concepts clés pour un débutant:
+ * - Cette classe contient TOUS les paramètres ajustables du jeu
+ * - Les "static final" sont des constantes (jamais modifiées)
+ * - TILE_SIZE = 16 * 3 = 48 pixels (taille des tuiles après mise à l'échelle)
+ * - MAX_FPS = 60: le jeu vise 60 images par seconde
+ * - NANOSECONDS_PER_FRAME = temps entre chaque frame (~16.67ms)
+ * - SCALE = 3: les sprites originaux de 16px sont agrandis 3x
+ * - screenWidth/screenHeight sont dynamiques (basés sur la taille de l'écran)
+ * 
+ * Utilisation: Config.getTileSize() retourne la taille des tuiles partout dans le code
+ */
 public class Config {
     
     private static final int ORIGINAL_TILE_SIZE = 16;

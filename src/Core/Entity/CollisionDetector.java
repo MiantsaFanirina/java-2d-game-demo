@@ -7,6 +7,22 @@ import Core.Moba.World.Arena;
 import Core.Tile.CollisionTable;
 import Core.Tile.TileMap;
 
+/**
+ * Détecteur de collisions - vérifie si le joueur peut se déplacer à une position.
+ * 
+ * Concepts clés pour un débutants:
+ * - Collision = quand deux objets se touchent/empêchent mutuellement
+ * - Hitbox = boîte de collision, la zone "physique" d'un objet
+ * - AABB (Axis-Aligned Bounding Box) = rectangle qui ne tourne pas (comme Minecraft)
+ * - collidesAt(x, y): retourne true si on ne peut PAS aller à cette position
+ * - isPathClear(): vérifie si on peut aller directement d'un point A à un point B
+ * - On vérifie les tuiles ET les structures (tours, bases)
+ * 
+ * Comment ça marche:
+ * 1. Convertir les coordonnées pixels en coordonnées de tuiles (pixel / tileSize)
+ * 2. Vérifier si la tuile est dans la collisionTable (bloquante ou non)
+ * 3. Vérifier si on collide avec une tour ou une base
+ */
 public class CollisionDetector {
 
     private final TileMap tileMap;

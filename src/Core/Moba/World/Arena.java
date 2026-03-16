@@ -9,6 +9,18 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * L'arène de jeu - contient tous les éléments du champ de bataille.
+ * 
+ * Concepts clés pour un débutant:
+ * - EnumMap<Voie, List<Vec2>>: chaque voie (TOP, MID, BOT) a une liste de points de passage
+ * - Voie = lane (chemin): TOP (haut), MID (milieu), BOT (bas)
+ * - Tours (Tower): les tours défensives qui attaquent les ennemis
+ * - CoreBase: la base principale de chaque équipe (si elle meurt, l'équipe perd)
+ * - Equipe: BLUE (Radiant) et RED (Dire) - comme dans Dota/League of Legends
+ * - Vec2: vecteur 2D pour les positions (x, y)
+ * - initializeFromMap(): analyse la carte pour placer automatiquement les tours/bases
+ */
 public final class Arena {
     private final Map<Voie, List<Vec2>> lanesWaypoints;
     private final List<Vec2> jungleCampPositions;
