@@ -1,12 +1,10 @@
-package game.engine.rendering;
+package Engine.Render;
 
 import Core.Config;
 import Core.Entity.Player;
 import Core.Moba.Units.CoreBase;
 import Core.Moba.Units.Tour;
 import Core.Moba.Units.TowerProjectile;
-import Engine.Render.Camera;
-import Engine.Render.ClickEffect;
 import Engine.Render.HUD.HUDRenderer;
 import Engine.Render.World.CoreBaseRenderer;
 import Engine.Render.World.PlayerRenderer;

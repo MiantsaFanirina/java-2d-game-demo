@@ -1,4 +1,4 @@
-package game.engine.state;
+package Engine.State;
 
 import javax.swing.*;
 import java.awt.*;

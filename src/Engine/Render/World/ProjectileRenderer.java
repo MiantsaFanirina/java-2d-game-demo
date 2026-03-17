@@ -4,7 +4,7 @@ import Core.Config;
 import Core.Moba.Units.TowerProjectile;
 import Core.Moba.Units.Tour;
 import Engine.Render.Camera;
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;

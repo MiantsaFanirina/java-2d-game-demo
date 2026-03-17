@@ -1,4 +1,4 @@
-package game.shared.infrastructure;
+package Engine.Render.Utilities;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

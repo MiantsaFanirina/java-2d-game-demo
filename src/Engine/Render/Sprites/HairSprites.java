@@ -1,7 +1,7 @@
 package Engine.Render.Sprites;
 
 import Core.Entity.Direction;
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 import java.awt.image.BufferedImage;
 
 public class HairSprites {

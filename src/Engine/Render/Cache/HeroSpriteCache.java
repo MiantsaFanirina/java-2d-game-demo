@@ -2,7 +2,7 @@ package Engine.Render.Cache;
 
 import Core.Database.model.Hero;
 import Core.Entity.Direction;
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 

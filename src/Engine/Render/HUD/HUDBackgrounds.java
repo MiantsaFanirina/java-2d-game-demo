@@ -1,6 +1,6 @@
 package Engine.Render.HUD;
 
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

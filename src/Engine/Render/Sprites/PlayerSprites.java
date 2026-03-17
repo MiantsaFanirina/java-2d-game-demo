@@ -2,7 +2,7 @@ package Engine.Render.Sprites;
 
 import Core.Entity.Direction;
 import Core.Config;
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 
 import java.awt.image.BufferedImage;
 

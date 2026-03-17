@@ -1,6 +1,6 @@
 package Engine.Tile;
 
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;

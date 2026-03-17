@@ -4,7 +4,7 @@ import Core.Config;
 import Core.Entity.Player;
 import Core.Entity.Direction;
 import Engine.Render.Cache.HeroSpriteCache;
-import game.shared.infrastructure.ImageLoader;
+import Engine.Render.Utilities.ImageLoader;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
