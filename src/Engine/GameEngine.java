@@ -120,11 +120,13 @@ public class GameEngine {
                 int degats = tour.ai().calculerDegats();
                 Object cible = tour.ai().cible();
                 if (cible != null) {
-                    System.out.println("Tour " + tour.equipe().couleur() + " at " + tour.position() + " firing at " + cible.getClass().getSimpleName());
+                    System.out.println("Tour " + tour.equipe().couleur() + " at " + tour.position() + 
+                                       " firing at " + cible.getClass().getSimpleName());
                      TowerProjectile projectile = new TowerProjectile(tour, cible, degats);
                      tour.ajouterProjectile(projectile);
                      tousProjectiles.add(projectile);
-                     // Reset tower attack ready flag after firing, animation continues to frame 20 then returns to idle automatically
+                      // Reset tower attack ready flag after firing, animation continues to frame 20 
+                      // then returns to idle automatically
                      tour.resetAttackReady();
                 }
             }

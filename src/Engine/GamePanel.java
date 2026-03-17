@@ -164,7 +164,7 @@ public class GamePanel extends JPanel {
         }
         // Hide pause menu if visible
         if (pauseMenu != null) {
-            pauseMenu.hide();
+            pauseMenu.hideMenu();
         }
         // Remove the GamePanel's mouse handler from heroSelectionPanel if it was added
         heroSelectionPanel.removeMouseListener(mouseHandler);
@@ -214,7 +214,7 @@ public class GamePanel extends JPanel {
                 gameEngine.pause();
             }
             pauseMenu.setSize(getWidth(), getHeight());
-            pauseMenu.showAt(mouseHandler.getCurrentX(), mouseHandler.getCurrentY(), getWidth(), getHeight());
+            pauseMenu.showMenuAt(mouseHandler.getCurrentX(), mouseHandler.getCurrentY(), getWidth(), getHeight());
             pauseMenu.requestFocusInWindow();
             setComponentZOrder(pauseMenu, 0);
             updateCursor();
@@ -228,7 +228,7 @@ public class GamePanel extends JPanel {
             if (gameEngine != null) {
                 gameEngine.resume();
             }
-            pauseMenu.hide();
+            pauseMenu.hideMenu();
             hudRenderer.resetPauseButtonHover();
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             repaint();

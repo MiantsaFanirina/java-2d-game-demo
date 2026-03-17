@@ -52,7 +52,8 @@ public class TargetInfoRenderer {
 
         var target = player.getSelectedTarget();
         g2.setFont(new Font("Arial", Font.BOLD, 12));
-        g2.drawString("Type: " + target.getClass().getSimpleName(), typeBounds.x, typeBounds.y + g2.getFontMetrics().getAscent());
+        g2.drawString("Type: " + target.getClass().getSimpleName(), typeBounds.x, 
+                      typeBounds.y + g2.getFontMetrics().getAscent());
 
         int hp = 100;
         int maxHp = 100;

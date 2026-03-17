@@ -141,7 +141,7 @@ public final class TowerAI {
                     distMinCreep = dist;
                     cibleCreep = unite;
                 }
-            } else if (unite instanceof Heros || unite instanceof Player) {
+            } else if (unite instanceof Player) {
                 if (dist < distMinHeros) {
                     distMinHeros = dist;
                     cibleHeros = unite;

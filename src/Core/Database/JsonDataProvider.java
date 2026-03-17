@@ -42,6 +42,18 @@ public class JsonDataProvider {
         return json.toString();
     }
     
+    private static boolean isWhitespaceOrComma(char c) {
+        return c == ' ' || c == '\n' || c == '\t' || c == ',';
+    }
+
+    private static boolean isWhitespace(char c) {
+        return c == ' ' || c == '\n' || c == '\t';
+    }
+
+    private static boolean isDelimiter(char c) {
+        return c == ',' || isWhitespace(c);
+    }
+
     private void parseHeroes(String json) {
         // Simple JSON parser for the expected structure
         List<Map<String, String>> heroObjects = parseJsonArray(json);
@@ -133,7 +145,7 @@ public class JsonDataProvider {
         int pos = 0;
         while (pos < json.length()) {
             // Skip whitespace and commas
-            while (pos < json.length() && (json.charAt(pos) == ' ' || json.charAt(pos) == '\n' || json.charAt(pos) == '\t' || json.charAt(pos) == ',')) {
+            while (pos < json.length() && isWhitespaceOrComma(json.charAt(pos))) {
                 pos++;
             }
             if (pos >= json.length()) break;
@@ -152,7 +164,7 @@ public class JsonDataProvider {
             pos++; // Skip colon
             
             // Skip whitespace
-            while (pos < json.length() && (json.charAt(pos) == ' ' || json.charAt(pos) == '\n' || json.charAt(pos) == '\t')) {
+            while (pos < json.length() && isWhitespace(json.charAt(pos))) {
                 pos++;
             }
             if (pos >= json.length()) break;
@@ -180,7 +192,7 @@ public class JsonDataProvider {
             } else {
                 // Number or boolean/null
                 int valStart = pos;
-                while (pos < json.length() && json.charAt(pos) != ',' && json.charAt(pos) != ' ' && json.charAt(pos) != '\n' && json.charAt(pos) != '\t') {
+                while (pos < json.length() && !isDelimiter(json.charAt(pos))) {
                     pos++;
                 }
                 value = json.substring(valStart, pos);

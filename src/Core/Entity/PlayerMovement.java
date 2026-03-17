@@ -1,9 +1,9 @@
 package Core.Entity;
 
 import Core.Config;
-import Engine.Input.MoveInput;
-import Engine.Input.TargetInput;
-import Core.Entity.MathUtils;
+import Core.Input.MoveInput;
+import Core.Input.TargetInput;
+import Core.Entity.GameUtils;
 
 import java.util.List;
 
@@ -169,7 +169,7 @@ public class PlayerMovement {
     private boolean moveToTarget(Entity entity) {
         double dx = targetX - entity.getX();
         double dy = targetY - entity.getY();
-        double distance = MathUtils.distance(entity.getX(), entity.getY(), targetX, targetY);
+        double distance = GameUtils.distance(entity.getX(), entity.getY(), targetX, targetY);
         
         // Assez loin pour bouger ?
         if (distance > entity.getSpeed()) {
@@ -313,7 +313,7 @@ public class PlayerMovement {
             return;
         }
         
-        double distToTarget = MathUtils.distance(entity.getX(), entity.getY(), targetX, targetY);
+        double distToTarget = GameUtils.distance(entity.getX(), entity.getY(), targetX, targetY);
         
         if (distToTarget < 1) {
             stuckCounter = 0;

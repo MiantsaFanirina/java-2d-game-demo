@@ -1,5 +1,6 @@
 package Engine.Input;
 
+import Core.Input.TargetInput;
 import Engine.Render.Camera;
 
 import java.awt.event.MouseAdapter;

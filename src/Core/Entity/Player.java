@@ -2,8 +2,8 @@ package Core.Entity;
 
 import Core.Config;
 import Core.Database.model.Hero;
-import Engine.Input.MoveInput;
-import Engine.Input.TargetInput;
+import Core.Input.MoveInput;
+import Core.Input.TargetInput;
 import Core.Moba.Combat.Stats;
 import Core.Moba.Units.Tour;
 import Core.Moba.World.Arena;

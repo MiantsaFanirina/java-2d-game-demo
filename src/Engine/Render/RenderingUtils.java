@@ -10,7 +10,8 @@ public class RenderingUtils {
         }
     }
 
-    public static void drawTextWithOutline(Graphics2D g2, String text, int x, int y, Color textColor, Color outlineColor) {
+    public static void drawTextWithOutline(Graphics2D g2, String text, int x, int y, 
+                                           Color textColor, Color outlineColor) {
         g2.setColor(outlineColor);
         g2.drawString(text, x - 1, y);
         g2.drawString(text, x + 1, y);
@@ -24,10 +25,6 @@ public class RenderingUtils {
         FontMetrics fm = g2.getFontMetrics();
         int textWidth = fm.stringWidth(text);
         g2.drawString(text, x - textWidth / 2, y);
-    }
-
-    public static Color getTeamColor(boolean isBlue) {
-        return isBlue ? new Color(0x42, 0x99, 0xe1) : new Color(0xf5, 0x65, 0x65);
     }
 
     public static void enableAntialiasing(Graphics2D g2) {

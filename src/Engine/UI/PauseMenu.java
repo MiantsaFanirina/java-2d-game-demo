@@ -88,7 +88,7 @@ public class PauseMenu extends JPanel {
         this.listener = listener;
     }
 
-    public void show(int screenWidth, int screenHeight) {
+    public void showMenu(int screenWidth, int screenHeight) {
         isMenuVisible = true;
         selectedIndex = 0;
         calculateLayout(screenWidth, screenHeight);
@@ -96,7 +96,7 @@ public class PauseMenu extends JPanel {
         repaint();
     }
     
-    public void showAt(int mouseX, int mouseY, int screenWidth, int screenHeight) {
+    public void showMenuAt(int mouseX, int mouseY, int screenWidth, int screenHeight) {
         isMenuVisible = true;
         selectedIndex = 0;
         calculateLayout(screenWidth, screenHeight);
@@ -105,7 +105,7 @@ public class PauseMenu extends JPanel {
         repaint();
     }
 
-    public void hide() {
+    public void hideMenu() {
         isMenuVisible = false;
         for (MenuButton btn : buttons) {
             btn.hovered = false;
@@ -158,7 +158,7 @@ public class PauseMenu extends JPanel {
     }
 
     private void resume() {
-        hide();
+        hideMenu();
         if (listener != null) {
             listener.onResume();
         }

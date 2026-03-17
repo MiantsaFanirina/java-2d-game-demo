@@ -34,7 +34,8 @@ public class PlayerSprites {
             int safeRow = (characterRow >= 0 && characterRow < maxRows) ? characterRow : 0;
             
             if (safeRow != characterRow) {
-                System.err.println("Warning: characterRow " + characterRow + " out of bounds (0-" + (maxRows-1) + "), using row 0");
+                System.err.println("Warning: characterRow " + characterRow + " out of bounds (0-" + 
+                                   (maxRows-1) + "), using row 0");
             }
             
             // Extract sprites for each direction

@@ -47,7 +47,8 @@ public class Equipement {
      * Minimal "fusion" mechanic: returns a new FINAL equipment when provided with matching component names.
      * This is intentionally data-driven and can be replaced by a real recipe system later.
      */
-    public static Equipement fusionner(String nomFinal, int prixFinal, StatsModifier bonusFinal, List<Equipement> items) {
+    public static Equipement fusionner(String nomFinal, int prixFinal, 
+                                       StatsModifier bonusFinal, List<Equipement> items) {
         Objects.requireNonNull(nomFinal, "nomFinal");
         if (nomFinal.isBlank()) throw new IllegalArgumentException("nomFinal cannot be blank");
         if (items == null || items.isEmpty()) throw new IllegalArgumentException("items cannot be empty");

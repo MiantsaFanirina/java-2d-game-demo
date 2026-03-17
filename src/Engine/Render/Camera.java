@@ -1,6 +1,6 @@
 package Engine.Render;
 
-import Core.Entity.MathUtils;
+import Core.Entity.GameUtils;
 import Core.Config;
 
 /**
@@ -149,8 +149,8 @@ public class Camera {
     }
 
     private void clamp() {
-        x = MathUtils.clamp(x, 0, getMaxCameraX());
-        y = MathUtils.clamp(y, 0, getMaxCameraY());
+        x = GameUtils.clamp(x, 0, getMaxCameraX());
+        y = GameUtils.clamp(y, 0, getMaxCameraY());
     }
 
     public void zoom(int wheelRotation) {
