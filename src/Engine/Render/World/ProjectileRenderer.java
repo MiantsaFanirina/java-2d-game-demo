@@ -4,12 +4,10 @@ import Core.Config;
 import Core.Moba.Units.TowerProjectile;
 import Core.Moba.Units.Tour;
 import Engine.Render.Camera;
+import game.shared.infrastructure.ImageLoader;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class ProjectileRenderer {
     private BufferedImage[] fireballFrames;
@@ -27,31 +25,15 @@ public class ProjectileRenderer {
         String[] frameNames = {"fireball_1.png", "fireball_2.png", "fireball_3.png"};
         
         for (int i = 0; i < 3; i++) {
-            try {
-                String path = "src/Resource/Projectile/" + frameNames[i];
-                File file = new File(path);
-                if (file.exists()) {
-                    fireballFrames[i] = ImageIO.read(file);
-                } else {
-                    fireballFrames[i] = createFallbackSprite(i);
-                }
-            } catch (IOException e) {
-                fireballFrames[i] = createFallbackSprite(i);
-            }
+            String path = "src/Resource/Projectile/" + frameNames[i];
+            BufferedImage loaded = ImageLoader.loadImage(path);
+            fireballFrames[i] = loaded != null ? loaded : createFallbackSprite(i);
         }
         
         // Load explosion sprite
-        try {
-            String explosionPath = "src/Resource/Projectile/explosion.png";
-            File explosionFile = new File(explosionPath);
-            if (explosionFile.exists()) {
-                explosionSprite = ImageIO.read(explosionFile);
-            } else {
-                explosionSprite = createExplosionFallback();
-            }
-        } catch (IOException e) {
-            explosionSprite = createExplosionFallback();
-        }
+        String explosionPath = "src/Resource/Projectile/explosion.png";
+        BufferedImage loadedExplosion = ImageLoader.loadImage(explosionPath);
+        explosionSprite = loadedExplosion != null ? loadedExplosion : createExplosionFallback();
     }
     
     private BufferedImage createFallbackSprite(int frame) {
