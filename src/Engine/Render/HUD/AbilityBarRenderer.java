@@ -63,7 +63,8 @@ public class AbilityBarRenderer {
                     g2.setFont(new Font("Arial", Font.PLAIN, 8));
                     String name = spell.getName().length() > 7 ? spell.getName().substring(0, 7) : spell.getName();
                     FontMetrics fm = g2.getFontMetrics();
-                    g2.drawString(name, slotBounds.x + (slotBounds.width - fm.stringWidth(name)) / 2, slotBounds.y + 45);
+                    g2.drawString(name, slotBounds.x + (slotBounds.width - fm.stringWidth(name)) / 2, 
+                                   slotBounds.y + 45);
                 }
             }
         }

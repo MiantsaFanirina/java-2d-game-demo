@@ -174,166 +174,163 @@ public interface SelectionListener {
         repaint();
     }
     
+    private Rectangle getBackButtonBounds() {
+        return new Rectangle(30, footerBounds.y + (footerBounds.height - 36) / 2, 130, 36);
+    }
+
+    private Rectangle getStartButtonBounds() {
+        if (selectedHero == null || footerBounds == null) return null;
+        String btnText = "▶ START GAME WITH " + selectedHero.getName().toUpperCase();
+        Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 16);
+        FontMetrics fm = getFontMetrics(btnFont);
+        int btnW = Math.min(getWidth() - 60 - 170, fm.stringWidth(btnText) + 50);
+        int btnH = 44;
+        int btnX = (getWidth() - btnW) / 2;
+        int btnY = footerBounds.y + (footerBounds.height - btnH) / 2;
+        return new Rectangle(btnX, btnY, btnW, btnH);
+    }
+
+    private boolean isPointInButton(int x, int y, Rectangle bounds) {
+        return bounds != null && 
+               x >= bounds.x && x <= bounds.x + bounds.width &&
+               y >= bounds.y && y <= bounds.y + bounds.height;
+    }
+
+    private boolean isOverTab(int x, int y) {
+        if (headerBounds == null) return false;
+        int tabY = headerBounds.height - TAB_Y_OFFSET;
+        if (y < tabY || y > tabY + TAB_HEIGHT) return false;
+        
+        int totalTabWidth = categories.length * TAB_WIDTH + (categories.length - 1) * TAB_SPACING;
+        int startX = headerBounds.x + (headerBounds.width - totalTabWidth) / 2;
+        
+        for (int i = 0; i < categories.length; i++) {
+            int tabLeft = startX + i * (TAB_WIDTH + TAB_SPACING);
+            if (x >= tabLeft && x <= tabLeft + TAB_WIDTH) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean handleTabClick(int x, int y) {
+        if (headerBounds == null || !headerBounds.contains(x, y)) return false;
+        int tabY = headerBounds.height - TAB_Y_OFFSET;
+        if (y < tabY || y > tabY + TAB_HEIGHT) return false;
+        
+        int totalTabWidth = categories.length * TAB_WIDTH + (categories.length - 1) * TAB_SPACING;
+        int startX = headerBounds.x + (headerBounds.width - totalTabWidth) / 2;
+        
+        for (int i = 0; i < categories.length; i++) {
+            int tabLeft = startX + i * (TAB_WIDTH + TAB_SPACING);
+            if (x >= tabLeft && x <= tabLeft + TAB_WIDTH) {
+                selectedCategory = categories[i];
+                scrollY = 0;
+                filterHeroes();
+                repaint();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isOverHeroCard(int x, int y) {
+        if (contentBounds == null || !contentBounds.contains(x, y) || filteredHeroes.isEmpty()) {
+            return false;
+        }
+        
+        int cols = calculateColumns();
+        int totalWidth = cols * cardWidth + (cols - 1) * cardSpacing;
+        int startX = contentBounds.x + (contentBounds.width - totalWidth) / 2;
+        
+        int effectiveY = (int) (y - contentBounds.y + scrollY);
+        int row = effectiveY / (cardHeight + cardSpacing);
+        int col = (x - startX) / (cardWidth + cardSpacing);
+        
+        if (col >= 0 && col < cols && row >= 0) {
+            int index = row * cols + col;
+            if (index >= 0 && index < filteredHeroes.size()) {
+                int cardX = startX + col * (cardWidth + cardSpacing);
+                int cardY = contentBounds.y + effectiveY - (effectiveY % (cardHeight + cardSpacing)) - scrollY;
+                return x >= cardX && x <= cardX + cardWidth && y >= cardY && y <= cardY + cardHeight;
+            }
+        }
+        return false;
+    }
+
     private void updateCursor(int x, int y) {
         if (headerBounds == null || footerBounds == null || contentBounds == null) {
             calculateLayoutBounds();
         }
-        
-        int backBtnW = 130;
-        int backBtnH = 36;
-        int backBtnX = 30;
-        int backBtnY = footerBounds.y + (footerBounds.height - backBtnH) / 2;
-        
-        if (footerBounds != null && footerBounds.contains(x, y) && 
-            x >= backBtnX && x <= backBtnX + backBtnW && y >= backBtnY && y <= backBtnY + backBtnH) {
+
+        if (isPointInButton(x, y, getBackButtonBounds())) {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             return;
         }
-        
-        // Check header tabs - only if inside header bounds
+
         if (headerBounds != null && headerBounds.contains(x, y)) {
-            if (y >= headerBounds.height - TAB_Y_OFFSET && y <= headerBounds.height - TAB_Y_OFFSET + TAB_HEIGHT) {
-                int totalTabWidth = categories.length * TAB_WIDTH + (categories.length - 1) * TAB_SPACING;
-                int startX = headerBounds.x + (headerBounds.width - totalTabWidth) / 2;
-                int tabY = headerBounds.y + headerBounds.height - TAB_Y_OFFSET;
-                
-                for (int i = 0; i < categories.length; i++) {
-                    int tabLeft = startX + i * (TAB_WIDTH + TAB_SPACING);
-                    if (x >= tabLeft && x <= tabLeft + TAB_WIDTH) {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        return;
-                    }
-                }
-            }
-        }
-        
-        // Check confirm button (only if in footer bounds)
-        if (footerBounds != null && footerBounds.contains(x, y) && selectedHero != null) {
-            String btnText = "▶ START GAME WITH " + selectedHero.getName().toUpperCase();
-            Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 16);
-            FontMetrics fm = getFontMetrics(btnFont);
-            int btnW = Math.min(getWidth() - 60 - 170, fm.stringWidth(btnText) + 50);
-            int btnH = 44;
-            int btnX = (getWidth() - btnW) / 2;
-            int btnY = footerBounds.y + (footerBounds.height - btnH) / 2;
-            
-            if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
+            if (isOverTab(x, y)) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 return;
             }
         }
-        
-        // Check hero cards only in content bounds
-        if (contentBounds != null && contentBounds.contains(x, y) && !filteredHeroes.isEmpty()) {
-            int cols = calculateColumns();
-            int totalWidth = cols * cardWidth + (cols - 1) * cardSpacing;
-            int startX = contentBounds.x + (contentBounds.width - totalWidth) / 2;
-            
-            int maxScroll = calculateMaxScroll();
-            int effectiveY = (int) (y - contentBounds.y + scrollY);
-            
-            int row = effectiveY / (cardHeight + cardSpacing);
-            int col = (x - startX) / (cardWidth + cardSpacing);
-            
-            if (col >= 0 && col < cols && row >= 0) {
-                int index = row * cols + col;
-                if (index >= 0 && index < filteredHeroes.size()) {
-                    int cardX = startX + col * (cardWidth + cardSpacing);
-                    int cardY = contentBounds.y + effectiveY - (effectiveY % (cardHeight + cardSpacing)) - scrollY;
-                    if (x >= cardX && x <= cardX + cardWidth && y >= cardY && y <= cardY + cardHeight) {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        return;
-                    }
-                }
-            }
+
+        if (isPointInButton(x, y, getStartButtonBounds())) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            return;
+        }
+
+        if (isOverHeroCard(x, y)) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            return;
         }
         
         setCursor(Cursor.getDefaultCursor());
     }
     
+    private Rectangle getBackButtonBoundsForClick() {
+        if (footerBounds == null) return null;
+        String backText = "◀ BACK TO MENU";
+        Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 14);
+        FontMetrics fm = getFontMetrics(btnFont);
+        int backBtnW = fm.stringWidth(backText) + 40;
+        int backBtnH = 36;
+        int backBtnX = 30;
+        int backBtnY = footerBounds.y + (footerBounds.height - backBtnH) / 2;
+        return new Rectangle(backBtnX, backBtnY, backBtnW, backBtnH);
+    }
+
     private void handleClick(int x, int y, int button) {
         if (button != MouseEvent.BUTTON1) return;
         
-        // Ensure layout bounds are calculated (they're calculated in paintComponent)
         if (headerBounds == null || footerBounds == null || contentBounds == null) {
             calculateLayoutBounds();
         }
-        
-        // Check back button (in footer bounds)
-        if (footerBounds != null) {
-            String backText = "◀ BACK TO MENU";
-            Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 14);
-            FontMetrics fm = getFontMetrics(btnFont);
-            int backBtnW = fm.stringWidth(backText) + 40;
-            int backBtnH = 36;
-            int backBtnX = 30;
-            int backBtnY = footerBounds.y + (footerBounds.height - backBtnH) / 2;
-            
-            if (x >= backBtnX && x <= backBtnX + backBtnW && y >= backBtnY && y <= backBtnY + backBtnH) {
-                if (listener != null) {
-                    listener.onGoBack();
-                }
-                return;
+
+        if (isPointInButton(x, y, getBackButtonBoundsForClick())) {
+            if (listener != null) {
+                listener.onGoBack();
             }
+            return;
         }
-        
-        // Check tabs (in header bounds)
+
         if (headerBounds != null && headerBounds.contains(x, y)) {
-            String backText = "◀ BACK TO MENU";
-            Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 14);
-            FontMetrics fm = getFontMetrics(btnFont);
-            int backBtnW = fm.stringWidth(backText) + 40;
-            int backBtnH = 36;
-            int backBtnX = 30;
-            int backBtnY = footerBounds.y + (footerBounds.height - backBtnH) / 2;
-            
-            if (x >= backBtnX && x <= backBtnX + backBtnW && y >= backBtnY && y <= backBtnY + backBtnH) {
-                if (listener != null) {
-                    listener.onGoBack();
-                }
+            if (handleTabClick(x, y)) {
                 return;
             }
         }
-        
-        // Check tabs (in header bounds)
-        if (headerBounds != null && headerBounds.contains(x, y)) {
-            if (y >= headerBounds.height - TAB_Y_OFFSET && y <= headerBounds.height - TAB_Y_OFFSET + TAB_HEIGHT) {
-                int totalTabWidth = categories.length * TAB_WIDTH + (categories.length - 1) * TAB_SPACING;
-                int startX = headerBounds.x + (headerBounds.width - totalTabWidth) / 2;
-                int tabY = headerBounds.y + headerBounds.height - TAB_Y_OFFSET;
-                
-                for (int i = 0; i < categories.length; i++) {
-                    int tabLeft = startX + i * (TAB_WIDTH + TAB_SPACING);
-                    if (x >= tabLeft && x <= tabLeft + TAB_WIDTH) {
-                        selectedCategory = categories[i];
-                        scrollY = 0;
-                        filterHeroes();
-                        repaint();
-                        return;
-                    }
-                }
+
+        if (isPointInButton(x, y, getStartButtonBounds())) {
+            if (listener != null) {
+                listener.onHeroSelected(selectedHero);
             }
+            return;
         }
-        
-        // Check confirm button (in footer bounds)
-        if (footerBounds != null && footerBounds.contains(x, y) && selectedHero != null) {
-            String btnText = "▶ START GAME WITH " + selectedHero.getName().toUpperCase();
-            Font btnFont = FONT_TAB.deriveFont(Font.BOLD, 16);
-            FontMetrics fm = getFontMetrics(btnFont);
-            int btnW = Math.min(getWidth() - 60 - 170, fm.stringWidth(btnText) + 50);
-            int btnH = 44;
-            int btnX = (getWidth() - btnW) / 2;
-            int btnY = footerBounds.y + (footerBounds.height - btnH) / 2;
-            
-            if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
-                if (listener != null) {
-                    listener.onHeroSelected(selectedHero);
-                }
-                return;
-            }
-        }
-        
-        // Check hero cards (only in content bounds)
+
+        handleHeroCardClick(x, y);
+    }
+
+    private void handleHeroCardClick(int x, int y) {
         if (contentBounds == null || filteredHeroes.isEmpty()) return;
         
         if (!contentBounds.contains(x, y)) return;

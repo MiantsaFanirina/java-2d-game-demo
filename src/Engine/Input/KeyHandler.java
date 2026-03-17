@@ -1,5 +1,6 @@
 package Engine.Input;
 
+import Core.Input.MoveInput;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.function.Consumer;
@@ -60,20 +61,7 @@ public class KeyHandler implements KeyListener, MoveInput {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         
-        boolean isUp = (keyCode == KeyEvent.VK_W) || (keyCode == KeyEvent.VK_Z);
-        boolean isDown = (keyCode == KeyEvent.VK_S);
-        boolean isLeft = (keyCode == KeyEvent.VK_A) || (keyCode == KeyEvent.VK_Q);
-        boolean isRight = (keyCode == KeyEvent.VK_D);
-        
-        if (isAzerty) {
-            isUp = (keyCode == KeyEvent.VK_Z);
-            isLeft = (keyCode == KeyEvent.VK_Q);
-        }
-        
-        if (isUp) upPressed = true;
-        if (isDown) downPressed = true;
-        if (isLeft) leftPressed = true;
-        if (isRight) rightPressed = true;
+        updateKeyState(keyCode, true);
         
         if (keyCode == KeyEvent.VK_R) {
             e.consume();
@@ -92,21 +80,35 @@ public class KeyHandler implements KeyListener, MoveInput {
     
     @Override
     public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
+        updateKeyState(e.getKeyCode(), false);
+    }
+    
+    private void updateKeyState(int keyCode, boolean pressed) {
+        boolean isUp = isMovementKey(keyCode, true, false, false, false);
+        boolean isDown = isMovementKey(keyCode, false, true, false, false);
+        boolean isLeft = isMovementKey(keyCode, false, false, true, false);
+        boolean isRight = isMovementKey(keyCode, false, false, false, true);
         
-        boolean isUp = (keyCode == KeyEvent.VK_W) || (keyCode == KeyEvent.VK_Z);
-        boolean isDown = (keyCode == KeyEvent.VK_S);
-        boolean isLeft = (keyCode == KeyEvent.VK_A) || (keyCode == KeyEvent.VK_Q);
-        boolean isRight = (keyCode == KeyEvent.VK_D);
-        
-        if (isAzerty) {
-            isUp = (keyCode == KeyEvent.VK_Z);
-            isLeft = (keyCode == KeyEvent.VK_Q);
+        if (isUp) upPressed = pressed;
+        if (isDown) downPressed = pressed;
+        if (isLeft) leftPressed = pressed;
+        if (isRight) rightPressed = pressed;
+    }
+    
+    private boolean isMovementKey(int keyCode, boolean checkUp, boolean checkDown, 
+                                  boolean checkLeft, boolean checkRight) {
+        if (checkUp) {
+            return isAzerty ? keyCode == KeyEvent.VK_Z : keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_Z;
         }
-        
-        if (isUp) upPressed = false;
-        if (isDown) downPressed = false;
-        if (isLeft) leftPressed = false;
-        if (isRight) rightPressed = false;
+        if (checkDown) {
+            return keyCode == KeyEvent.VK_S;
+        }
+        if (checkLeft) {
+            return isAzerty ? keyCode == KeyEvent.VK_Q : keyCode == KeyEvent.VK_A || keyCode == KeyEvent.VK_Q;
+        }
+        if (checkRight) {
+            return keyCode == KeyEvent.VK_D;
+        }
+        return false;
     }
 }

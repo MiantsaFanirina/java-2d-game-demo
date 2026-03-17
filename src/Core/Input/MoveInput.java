@@ -1,4 +1,4 @@
-package Engine.Input;
+package Core.Input;
 
 public interface MoveInput {
     boolean isUpPressed();

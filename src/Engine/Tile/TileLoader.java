@@ -36,13 +36,6 @@ public class TileLoader {
                         if (tile.getId() == 5) {
                             loadExtraWaterTextures(tile);
                         }
-     // Load core base textures - use houses.png for modular house system
-     if (tile.getId() == 22) {
-         loadCoreBaseBlueTextures(tile);
-     }
-     if (tile.getId() == 23) {
-         loadCoreBaseRedTextures(tile);
-     }
                         // Load tower textures from spritesheet
                         if (tile.getId() == 20) {
                             loadTowerBlueTextures(tile);
@@ -70,16 +63,6 @@ public class TileLoader {
                 System.err.println("Could not load extra water texture: " + path);
             }
         }
-    }
-
-    private void loadCoreBaseBlueTextures(Tile tile) {
-        // CoreBase now uses decos.png (long stone) - no additional texture loading needed
-        // The CoreBaseSpriteCache will handle the rendering
-    }
-
-    private void loadCoreBaseRedTextures(Tile tile) {
-        // CoreBase now uses decos.png (long stone) - no additional texture loading needed
-        // The CoreBaseSpriteCache will handle the rendering
     }
 
     private void loadTowerBlueTextures(Tile tile) {

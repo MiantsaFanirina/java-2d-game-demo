@@ -59,12 +59,14 @@ public class ScoreboardRenderer {
         g2.setFont(new Font("Arial", Font.BOLD, 16));
         FontMetrics fm = g2.getFontMetrics();
         Rectangle timerBounds = container.getItem(0).bounds;
-        g2.drawString(timerText, timerBounds.x + (timerBounds.width - fm.stringWidth(timerText)) / 2, timerBounds.y + fm.getAscent());
+        g2.drawString(timerText, timerBounds.x + (timerBounds.width - fm.stringWidth(timerText)) / 2, 
+                      timerBounds.y + fm.getAscent());
 
         g2.setColor(new Color(80, 180, 255));
         g2.setFont(new Font("Arial", Font.BOLD, 10));
         Rectangle blueBounds = container.getItem(1).bounds;
-        g2.drawString("Blue: " + arena.getBlueKills(), blueBounds.x + 2, blueBounds.y + g2.getFontMetrics().getAscent());
+        g2.drawString("Blue: " + arena.getBlueKills(), blueBounds.x + 2, 
+                      blueBounds.y + g2.getFontMetrics().getAscent());
 
         g2.setColor(new Color(255, 80, 80));
         Rectangle redBounds = container.getItem(2).bounds;

@@ -37,7 +37,7 @@ public class CollisionDetector {
 
     public boolean collidesAt(double topLeftX, double topLeftY) {
         return collidesWithTile(topLeftX, topLeftY) || 
-               (arena != null && collidesWithStructures(topLeftX, topLeftY));
+               collidesWithStructures(topLeftX, topLeftY);
     }
 
     private boolean collidesWithTile(double topLeftX, double topLeftY) {
@@ -64,6 +64,8 @@ public class CollisionDetector {
     }
 
     private boolean collidesWithStructures(double topLeftX, double topLeftY) {
+        if (arena == null) return false;
+        
         HitboxUtils.Hitbox entityCollisionBox = HitboxUtils.createEntityCollisionBox(topLeftX, topLeftY);
 
         for (Tour tower : arena.tours()) {
@@ -86,7 +88,7 @@ public class CollisionDetector {
     }
 
     public boolean isPathClear(double x1, double y1, double x2, double y2) {
-        double distance = MathUtils.distance(x1, y1, x2, y2);
+        double distance = GameUtils.distance(x1, y1, x2, y2);
         if (distance < 1) return true;
 
         double pathClearInset = HitboxUtils.HITBOX_INSET + 2.0;
@@ -96,14 +98,14 @@ public class CollisionDetector {
             double ratio = (double) i / steps;
             double checkX = x1 + (x2 - x1) * ratio;
             double checkY = y1 + (y2 - y1) * ratio;
-            if (collidesAtPathCheck(checkX, checkY, pathClearInset)) {
+            if (collidesAtPathCheck(checkX, checkY)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean collidesAtPathCheck(double topLeftX, double topLeftY, double inset) {
+    private boolean collidesAtPathCheck(double topLeftX, double topLeftY) {
         HitboxUtils.Hitbox collisionBox = HitboxUtils.createEntityCollisionBox(topLeftX, topLeftY);
         
         return isWallAt(collisionBox.getLeft(), collisionBox.getTop()) ||
@@ -111,28 +113,6 @@ public class CollisionDetector {
                isWallAt(collisionBox.getLeft(), collisionBox.getBottom()) ||
                isWallAt(collisionBox.getRight(), collisionBox.getBottom()) ||
                isWallAt(collisionBox.getCenterX(), collisionBox.getCenterY()) ||
-               (arena != null && collidesWithStructuresAt(topLeftX, topLeftY));
-    }
-
-    private boolean collidesWithStructuresAt(double topLeftX, double topLeftY) {
-        HitboxUtils.Hitbox entityCollisionBox = HitboxUtils.createEntityCollisionBox(topLeftX, topLeftY);
-
-        for (Tour tower : arena.tours()) {
-            HitboxUtils.Hitbox towerCollisionBox = HitboxUtils.createTowerCollisionBox(
-                tower.position().x(), tower.position().y(), tower.width(), tower.height());
-            if (HitboxUtils.aabbIntersects(entityCollisionBox, towerCollisionBox)) {
-                return true;
-            }
-        }
-
-        for (CoreBase coreBase : arena.coreBases()) {
-            HitboxUtils.Hitbox coreBaseCollisionBox = HitboxUtils.createCoreBaseCollisionBox(
-                coreBase.position().x(), coreBase.position().y(), coreBase.width(), coreBase.height());
-            if (HitboxUtils.aabbIntersects(entityCollisionBox, coreBaseCollisionBox)) {
-                return true;
-            }
-        }
-
-        return false;
+               collidesWithStructures(topLeftX, topLeftY);
     }
 }

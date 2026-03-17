@@ -62,7 +62,8 @@ public class Tour extends Unite {
         this.attackReady = false;
     }
 
-    public Tour(Equipe equipe, Vec2 position, int hp, int armure, int attaque, int portee, int tier, Voie lane, int w, int h) {
+    public Tour(Equipe equipe, Vec2 position, int hp, int armure, int attaque, int portee, 
+                int tier, Voie lane, int w, int h) {
         this(equipe, position, hp, armure, attaque, portee);
         this.tier = tier;
         this.lane = lane;
