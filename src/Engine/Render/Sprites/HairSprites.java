@@ -1,10 +1,8 @@
 package Engine.Render.Sprites;
 
 import Core.Entity.Direction;
+import game.shared.infrastructure.ImageLoader;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class HairSprites {
     private final BufferedImage[][] sprites; // [direction][frame]
@@ -23,18 +21,17 @@ public class HairSprites {
         this.hairRow = hairRow;
         sprites = new BufferedImage[4][FRAMES_PER_DIRECTION];
         
-        try {
-            BufferedImage sheet = ImageIO.read(new File("src/Resource/Characters/Hair/Hairs.png"));
-            
-            // Extract sprites for each direction
-            // Directions: DOWN, RIGHT, UP, LEFT (matching game's Direction enum)
-            extractDirectionFrames(sheet, hairRow, COL_SOUTH, 0);  // DOWN
-            extractDirectionFrames(sheet, hairRow, COL_EAST, 1);   // RIGHT
-            extractDirectionFrames(sheet, hairRow, COL_NORTH, 2); // UP
-            extractDirectionFrames(sheet, hairRow, COL_WEST, 3);  // LEFT
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load hair spritesheet", e);
+        BufferedImage sheet = ImageLoader.loadImage("src/Resource/Characters/Hair/Hairs.png");
+        if (sheet == null) {
+            throw new RuntimeException("Failed to load hair spritesheet");
         }
+        
+        // Extract sprites for each direction
+        // Directions: DOWN, RIGHT, UP, LEFT (matching game's Direction enum)
+        extractDirectionFrames(sheet, hairRow, COL_SOUTH, 0);  // DOWN
+        extractDirectionFrames(sheet, hairRow, COL_EAST, 1);   // RIGHT
+        extractDirectionFrames(sheet, hairRow, COL_NORTH, 2); // UP
+        extractDirectionFrames(sheet, hairRow, COL_WEST, 3);  // LEFT
     }
     
     private void extractDirectionFrames(BufferedImage sheet, int row, int startCol, int dirIndex) {

@@ -4,12 +4,10 @@ import Core.Config;
 import Core.Entity.Player;
 import Core.Entity.Direction;
 import Engine.Render.Cache.HeroSpriteCache;
+import game.shared.infrastructure.ImageLoader;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class PlayerRenderer {
     private final HeroSpriteCache spriteCache;
@@ -21,11 +19,11 @@ public class PlayerRenderer {
     }
 
     private BufferedImage loadShadow() {
-        try {
-            return ImageIO.read(new File("src/Resource/Characters/CharacterModel/Shadow.png"));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load shadow image", e);
+        BufferedImage shadow = ImageLoader.loadImage("src/Resource/Characters/CharacterModel/Shadow.png");
+        if (shadow == null) {
+            throw new RuntimeException("Failed to load shadow image");
         }
+        return shadow;
     }
 
     public void draw(Graphics2D g2, Player player) {

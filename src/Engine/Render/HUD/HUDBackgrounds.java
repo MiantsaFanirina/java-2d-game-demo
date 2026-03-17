@@ -1,10 +1,8 @@
 package Engine.Render.HUD;
 
-import javax.imageio.ImageIO;
+import game.shared.infrastructure.ImageLoader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class HUDBackgrounds {
 
@@ -17,17 +15,16 @@ public class HUDBackgrounds {
     private static void initialize() {
         if (initialized) return;
         
-        try {
-            panelBg = ImageIO.read(new File("src/Resource/HUD/panel.png"));
-            smallPanelBg = ImageIO.read(new File("src/Resource/HUD/small_panel.png"));
-            abilitySlotBg = ImageIO.read(new File("src/Resource/HUD/ability_slot.png"));
-            itemSlotBg = ImageIO.read(new File("src/Resource/HUD/item_slot.png"));
-        } catch (IOException e) {
-            panelBg = createPanelBackground(200, 140);
-            smallPanelBg = createSmallPanelBackground(140, 60);
-            abilitySlotBg = createAbilitySlotBackground(46);
-            itemSlotBg = createItemSlotBackground(28);
-        }
+        panelBg = ImageLoader.loadImage("src/Resource/HUD/panel.png");
+        smallPanelBg = ImageLoader.loadImage("src/Resource/HUD/small_panel.png");
+        abilitySlotBg = ImageLoader.loadImage("src/Resource/HUD/ability_slot.png");
+        itemSlotBg = ImageLoader.loadImage("src/Resource/HUD/item_slot.png");
+        
+        if (panelBg == null) panelBg = createPanelBackground(200, 140);
+        if (smallPanelBg == null) smallPanelBg = createSmallPanelBackground(140, 60);
+        if (abilitySlotBg == null) abilitySlotBg = createAbilitySlotBackground(46);
+        if (itemSlotBg == null) itemSlotBg = createItemSlotBackground(28);
+        
         initialized = true;
     }
 

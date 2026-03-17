@@ -1,6 +1,6 @@
 package Engine.Tile;
 
-import javax.imageio.ImageIO;
+import game.shared.infrastructure.ImageLoader;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -56,10 +56,10 @@ public class TileLoader {
     private void loadExtraWaterTextures(Tile tile) {
         String[] extras = {"src/Resource/Tiles/water.png"};
         for (String path : extras) {
-            try {
-                BufferedImage img = ImageIO.read(new File(path));
+            BufferedImage img = ImageLoader.loadImage(path);
+            if (img != null) {
                 tile.addImage(img);
-            } catch (IOException e) {
+            } else {
                 System.err.println("Could not load extra water texture: " + path);
             }
         }
@@ -69,11 +69,11 @@ public class TileLoader {
         // Load the new Tower-sheet.png spritesheet and cache team-colored frames
         String[] extras = {"src/Resource/Tower/Tower-sheet.png"};
         for (String path : extras) {
-            try {
-                BufferedImage img = ImageIO.read(new File(path));
+            BufferedImage img = ImageLoader.loadImage(path);
+            if (img != null) {
                 // Cache pre-processed blue team frames
                 tile.setUserData(cacheTowerFrames(img, TeamColor.BLUE));
-            } catch (IOException e) {
+            } else {
                 System.err.println("Could not load tower sheet texture: " + path);
             }
         }
@@ -83,11 +83,11 @@ public class TileLoader {
         // Load the new Tower-sheet.png spritesheet and cache team-colored frames
         String[] extras = {"src/Resource/Tower/Tower-sheet.png"};
         for (String path : extras) {
-            try {
-                BufferedImage img = ImageIO.read(new File(path));
+            BufferedImage img = ImageLoader.loadImage(path);
+            if (img != null) {
                 // Cache pre-processed red team frames
                 tile.setUserData(cacheTowerFrames(img, TeamColor.RED));
-            } catch (IOException e) {
+            } else {
                 System.err.println("Could not load tower sheet texture: " + path);
             }
         }
@@ -224,7 +224,11 @@ public class TileLoader {
     private BufferedImage decodeImage(String base64Data) throws IOException {
         byte[] bytes = Base64.getDecoder().decode(base64Data);
         try (ByteArrayInputStream input = new ByteArrayInputStream(bytes)) {
-            return ImageIO.read(input);
+            BufferedImage img = ImageLoader.loadImage(input);
+            if (img == null) {
+                throw new IOException("Failed to decode image from base64");
+            }
+            return img;
         }
     }
 }

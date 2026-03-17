@@ -1,9 +1,7 @@
 package Engine.Render.Cache;
 
+import game.shared.infrastructure.ImageLoader;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class ProjectileSpriteCache {
 
@@ -20,32 +18,17 @@ public class ProjectileSpriteCache {
         String[] frameNames = {"fireball_1.png", "fireball_2.png", "fireball_3.png"};
         
         for (int i = 0; i < 3; i++) {
-            try {
-                String path = "src/Resource/Projectile/" + frameNames[i];
-                File file = new File(path);
-                if (file.exists()) {
-                    frames[i] = ImageIO.read(file);
-                } else {
-                    frames[i] = createFallbackSprite(i);
-                }
-            } catch (IOException e) {
-                frames[i] = createFallbackSprite(i);
-            }
+            String path = "src/Resource/Projectile/" + frameNames[i];
+            BufferedImage loaded = ImageLoader.loadImage(path);
+            frames[i] = loaded != null ? loaded : createFallbackSprite(i);
         }
         return frames;
     }
 
     private BufferedImage loadExplosionSprite() {
-        try {
-            String explosionPath = "src/Resource/Projectile/explosion.png";
-            File explosionFile = new File(explosionPath);
-            if (explosionFile.exists()) {
-                return ImageIO.read(explosionFile);
-            }
-            return createExplosionFallback();
-        } catch (IOException e) {
-            return createExplosionFallback();
-        }
+        String explosionPath = "src/Resource/Projectile/explosion.png";
+        BufferedImage loaded = ImageLoader.loadImage(explosionPath);
+        return loaded != null ? loaded : createExplosionFallback();
     }
 
     private BufferedImage createFallbackSprite(int frame) {

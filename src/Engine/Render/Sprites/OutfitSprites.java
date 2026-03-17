@@ -1,10 +1,8 @@
 package Engine.Render.Sprites;
 
 import Core.Entity.Direction;
+import game.shared.infrastructure.ImageLoader;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class OutfitSprites {
     private final BufferedImage[][] sprites; // [direction][frame]
@@ -20,17 +18,16 @@ public class OutfitSprites {
     public OutfitSprites(String outfitFileName) {
         sprites = new BufferedImage[4][FRAMES_PER_DIRECTION];
         
-        try {
-            BufferedImage sheet = ImageIO.read(new File("src/Resource/Characters/Outfits/" + outfitFileName));
-            
-            // Extract sprites for each direction from row 0 (single row)
-            extractDirectionFrames(sheet, 0, COL_SOUTH, 0);  // DOWN
-            extractDirectionFrames(sheet, 0, COL_EAST, 1);   // RIGHT
-            extractDirectionFrames(sheet, 0, COL_NORTH, 2); // UP
-            extractDirectionFrames(sheet, 0, COL_WEST, 3);  // LEFT
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load outfit spritesheet: " + outfitFileName, e);
+        BufferedImage sheet = ImageLoader.loadImage("src/Resource/Characters/Outfits/" + outfitFileName);
+        if (sheet == null) {
+            throw new RuntimeException("Failed to load outfit spritesheet: " + outfitFileName);
         }
+        
+        // Extract sprites for each direction from row 0 (single row)
+        extractDirectionFrames(sheet, 0, COL_SOUTH, 0);  // DOWN
+        extractDirectionFrames(sheet, 0, COL_EAST, 1);   // RIGHT
+        extractDirectionFrames(sheet, 0, COL_NORTH, 2); // UP
+        extractDirectionFrames(sheet, 0, COL_WEST, 3);  // LEFT
     }
     
     private void extractDirectionFrames(BufferedImage sheet, int row, int startCol, int dirIndex) {
